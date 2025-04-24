@@ -1,9 +1,9 @@
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f8f9fa;
-  color: #333;
   margin: 0;
   padding: 0;
+  color: #333;
 }
 
 header, footer {
@@ -17,95 +17,49 @@ h1 {
   margin-bottom: 0.5rem;
 }
 
-main {
-  padding: 1rem;
-  max-width: 900px;
-  margin: auto;
+main.kingdom-grid {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.kingdom-card {
   background: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-#search {
-  padding: 8px;
-  width: 100%;
-  max-width: 300px;
-  margin: 1rem 0;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-#grade-filters {
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  width: 250px;
   text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.kingdom-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.kingdom-card h2 {
+  margin-bottom: 0.5rem;
+}
+
+.kingdom-card p {
   margin-bottom: 1rem;
+  color: #555;
 }
 
-#grade-filters button {
-  background-color: #e9ecef;
-  border: none;
-  margin: 0 4px;
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-#grade-filters button:hover {
-  background-color: #ced4da;
-}
-
-.dkp-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 1rem;
-}
-
-.dkp-table th, .dkp-table td {
-  border: 1px solid #dee2e6;
-  padding: 0.75rem;
-  text-align: center;
-}
-
-.dkp-table th {
-  background-color: #f1f3f5;
-  font-weight: bold;
-}
-
-/* 등급 색상 강조 */
-.grade-s td { background-color: #d4edda; color: #155724; }
-.grade-a td { background-color: #fff3cd; color: #856404; }
-.grade-b td { background-color: #d1ecf1; color: #0c5460; }
-.grade-c td { background-color: #f8d7da; color: #721c24; }
-.grade-d td { background-color: #f5c6cb; color: #721c24; }
-
-/* 페이지네이션 */
-#pagination-controls {
-  text-align: center;
-  margin: 1.5rem 0;
-}
-
-#pagination-controls button {
+.kingdom-card button {
   background-color: #007bff;
   color: white;
   border: none;
-  margin: 0 6px;
-  padding: 6px 14px;
-  border-radius: 4px;
-  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
-#pagination-controls button:disabled {
-  background-color: #6c757d;
-  cursor: not-allowed;
-}
-
-#pagination-controls button:hover:not(:disabled) {
+.kingdom-card button:hover {
   background-color: #0056b3;
 }
