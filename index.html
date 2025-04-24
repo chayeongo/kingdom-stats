@@ -1,50 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DKP Kingdom Selector</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
       padding: 0;
       height: 100vh;
-      font-family: 'Orbitron', sans-serif;
+      font-family: sans-serif;
       color: white;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       position: relative;
-      overflow: hidden;
+      z-index: 1;
     }
 
-    .background {
+    body::before {
+      content: "";
       position: fixed;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 100%;
-      background: url('./중세배경.jpg') no-repeat center center/cover;
-      filter: brightness(0.3) blur(2px);
-      z-index: -2;
-    }
-
-    .overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.4);
+      right: 0;
+      bottom: 0;
+      background: url('./중세배경.jpg') no-repeat center center / cover;
+      opacity: 0.5; /* 이미지가 너무 진하면 여기 숫자를 낮춰줘 */
       z-index: -1;
     }
 
     h1 {
       font-size: 2.5rem;
       margin-bottom: 2rem;
-      text-shadow: 0 0 10px rgba(255, 204, 0, 0.8);
+      text-shadow: 0 0 10px black;
     }
 
     .kingdom-buttons {
@@ -73,8 +63,6 @@
   </style>
 </head>
 <body>
-  <div class="background"></div>
-  <div class="overlay"></div>
   <h1>왕국을 선택하세요</h1>
   <div class="kingdom-buttons">
     <button class="kingdom-button" onclick="location.href='kingdom.html?kingdomId=3599'">3599 베르디나</button>
