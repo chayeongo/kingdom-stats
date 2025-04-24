@@ -4,14 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kingdom Stats</title>
-  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
   <style>
     body, html {
       margin: 0;
       padding: 0;
       height: 100%;
-      font-family: 'Segoe UI', sans-serif;
-      color: white;
+      font-family: 'Orbitron', sans-serif;
+      color: #fff;
+      background-color: #000;
       overflow: hidden;
     }
 
@@ -21,8 +22,8 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: url("assets/medieval_background.jpg") no-repeat center center/cover;
-      filter: brightness(0.3) blur(1px);
+      background: url("./assets/medieval_background.jpg") no-repeat center center/cover;
+      filter: brightness(0.25) blur(2px);
       z-index: -2;
     }
 
@@ -32,8 +33,25 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: radial-gradient(ellipse at center, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.8) 100%);
+      background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.4));
       z-index: -1;
+    }
+
+    .language-switcher {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      z-index: 10;
+    }
+
+    .language-switcher button {
+      background-color: transparent;
+      border: 1px solid #fff;
+      color: #fff;
+      padding: 5px 10px;
+      margin-left: 5px;
+      cursor: pointer;
+      border-radius: 5px;
     }
 
     .particles {
@@ -54,43 +72,59 @@
     }
 
     h1 {
-      font-size: 3rem;
-      letter-spacing: 2px;
+      font-size: 3.5rem;
+      letter-spacing: 3px;
+      color: #ffcc00;
+      text-shadow: 0 0 10px rgba(255, 204, 0, 0.8);
     }
 
     p {
-      font-size: 1.25rem;
-      opacity: 0.8;
+      font-size: 1.4rem;
+      opacity: 0.9;
+      color: #eee;
+      text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
     }
 
     .button {
       margin-top: 2rem;
-      padding: 10px 20px;
-      font-size: 1rem;
+      padding: 12px 28px;
+      font-size: 1.1rem;
       background-color: #ff4500;
       border: none;
-      border-radius: 5px;
+      border-radius: 8px;
       color: white;
       cursor: pointer;
-      transition: background 0.3s;
+      transition: background 0.3s, transform 0.2s;
+      box-shadow: 0 0 10px rgba(255, 69, 0, 0.6);
     }
 
     .button:hover {
       background-color: #e03e00;
+      transform: scale(1.05);
     }
   </style>
 </head>
 <body>
   <div class="background"></div>
   <div class="overlay"></div>
+  <div class="language-switcher">
+    <button onclick="switchLang('en')">EN</button>
+    <button onclick="switchLang('ko')">KR</button>
+  </div>
   <canvas class="particles" id="particleCanvas"></canvas>
   <div class="content">
-    <h1>3599 Kingdom DKP Analysis</h1>
-    <p>Explore real-time kingdom war performance</p>
-    <a href="kingdom.html?kingdomId=3599" class="button">Enter Kingdom</a>
+    <h1 data-en="3599 Kingdom DKP Analysis" data-ko="3599 왕국 DKP 분석">3599 Kingdom DKP Analysis</h1>
+    <p data-en="Explore real-time kingdom war performance" data-ko="왕국 전쟁 기여도를 실시간으로 분석하세요">Explore real-time kingdom war performance</p>
+    <a href="kingdom.html?kingdomId=3599" class="button" data-en="Enter Kingdom" data-ko="왕국 입장">Enter Kingdom</a>
   </div>
 
   <script>
+    function switchLang(lang) {
+      document.querySelectorAll('[data-en]').forEach(el => {
+        el.textContent = el.getAttribute(`data-${lang}`);
+      });
+    }
+
     const canvas = document.getElementById('particleCanvas');
     const ctx = canvas.getContext('2d');
     let particlesArray;
