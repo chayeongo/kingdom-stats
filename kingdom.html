@@ -16,7 +16,7 @@
     <button class="tab" id="KVK3" onclick="loadKVK('KVK3')">KVK3</button>
   </div>
 
-  <!-- ✅ 기여도 분석 버튼 추가 위치 -->
+  <!-- 기여도 분석 버튼 -->
   <div style="text-align: center; margin: 1rem;">
     <button onclick="goToContribution()">⚔️ KVK2 기여도 분석 보기</button>
   </div>
@@ -42,7 +42,7 @@
         <tr>
           <th>UID</th>
           <th>이름</th>
-          <th>기여도 점수</th>
+          <th>점수</th>
         </tr>
       </thead>
       <tbody id="data">
@@ -56,20 +56,12 @@
 
   <!-- 스크립트 -->
   <script src="kingdom.js"></script>
-
-  <!-- ✅ 기여도 분석 이동 스크립트 -->
   <script>
     function goToContribution() {
       const params = new URLSearchParams(window.location.search);
       const kingdomId = params.get("kingdomId");
       window.location.href = `contribution.html?kingdomId=${kingdomId}`;
     }
-
-    // 기본 탭은 KVK3
-    document.addEventListener("DOMContentLoaded", () => {
-      loadKVK('KVK3');
-      document.getElementById("KVK3").classList.add("active");
-    });
   </script>
 </body>
 </html>
