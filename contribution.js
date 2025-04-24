@@ -96,7 +96,6 @@ function handlePageSizeChange(val) {
   renderPage();
 }
 
-// ✅ 네 시트 구조에 맞춘 데이터 가져오기
 async function fetchData() {
   const url = `https://docs.google.com/spreadsheets/d/1G2RwOq32kSubrYRtO5xt6UsaIXQBdfjKsz9r386PFso/gviz/tq?tqx=out:json&sheet=KVK2`;
 
@@ -137,7 +136,6 @@ async function fetchData() {
   }
 }
 
-// ✅ 실행
 window.addEventListener("DOMContentLoaded", () => {
   fetchData();
   document.getElementById("search").addEventListener("input", handleSearch);
