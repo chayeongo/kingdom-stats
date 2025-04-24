@@ -44,6 +44,16 @@
 
   <div id="pagination"></div>
 
-  <script src="contribution.js"></script>
+  <!-- ✅ JS 실행 시점 조절 -->
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      const script = document.createElement("script");
+      script.src = "contribution.js";
+      document.body.appendChild(script);
+    });
+  </script>
+</body>
+</html>
+
 </body>
 </html>
