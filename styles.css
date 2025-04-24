@@ -1,7 +1,7 @@
 body {
-  font-family: 'Segoe UI', sans-serif;
-  background-color: #111;
-  color: #fff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f8f9fa;
+  color: #333;
   margin: 0;
   padding: 0;
 }
@@ -10,56 +10,102 @@ header, footer {
   text-align: center;
   padding: 1rem;
   background-color: #222;
+  color: white;
 }
 
-.kingdom-selector {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  margin-top: 2rem;
-  flex-wrap: wrap;
+h1 {
+  margin-bottom: 0.5rem;
 }
 
-.kingdom-card {
-  background-color: #333;
-  border-radius: 10px;
-  padding: 1rem 2rem;
-  cursor: pointer;
-  transition: transform 0.2s;
-  border: 1px solid #444;
-}
-.kingdom-card:hover {
-  transform: scale(1.05);
-  background-color: #444;
+main {
+  padding: 1rem;
+  max-width: 900px;
+  margin: auto;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
-#kvk-tabs {
+#search {
+  padding: 8px;
+  width: 100%;
+  max-width: 300px;
+  margin: 1rem 0;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#grade-filters {
   text-align: center;
+  margin-bottom: 1rem;
+}
+
+#grade-filters button {
+  background-color: #e9ecef;
+  border: none;
+  margin: 0 4px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+#grade-filters button:hover {
+  background-color: #ced4da;
+}
+
+.dkp-table {
+  width: 100%;
+  border-collapse: collapse;
   margin-top: 1rem;
 }
-#kvk-tabs button {
-  background: #333;
-  color: white;
-  border: 1px solid #555;
-  margin: 0 0.5rem;
-  padding: 0.5rem 1rem;
-  border-radius: 5px;
-  cursor: pointer;
-}
-#kvk-tabs button:hover {
-  background: #555;
-}
 
-table.dkp-table {
-  margin: 2rem auto;
-  border-collapse: collapse;
-  width: 90%;
-}
-table.dkp-table th, table.dkp-table td {
-  border: 1px solid #666;
-  padding: 0.5rem;
+.dkp-table th, .dkp-table td {
+  border: 1px solid #dee2e6;
+  padding: 0.75rem;
   text-align: center;
 }
-table.dkp-table th {
-  background-color: #222;
+
+.dkp-table th {
+  background-color: #f1f3f5;
+  font-weight: bold;
+}
+
+/* 등급 색상 강조 */
+.grade-s td { background-color: #d4edda; color: #155724; }
+.grade-a td { background-color: #fff3cd; color: #856404; }
+.grade-b td { background-color: #d1ecf1; color: #0c5460; }
+.grade-c td { background-color: #f8d7da; color: #721c24; }
+.grade-d td { background-color: #f5c6cb; color: #721c24; }
+
+/* 페이지네이션 */
+#pagination-controls {
+  text-align: center;
+  margin: 1.5rem 0;
+}
+
+#pagination-controls button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  margin: 0 6px;
+  padding: 6px 14px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+#pagination-controls button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+#pagination-controls button:hover:not(:disabled) {
+  background-color: #0056b3;
 }
