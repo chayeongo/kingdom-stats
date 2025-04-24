@@ -7,6 +7,7 @@ const sheetURL = sheetLinks[kingdomId];
 
 let allData = [], filteredData = [], currentPage = 1;
 const pageSize = 10;
+let gradeFilter = "ALL";
 
 function calculateGrade(score) {
   if (score >= 90) return "S";
@@ -42,10 +43,11 @@ function fetchData() {
         const kp = parseInt(r[kpIdx] || 0);
         const t4 = parseInt(r[t4Idx] || 0);
         const t5 = parseInt(r[t5Idx] || 0);
-        const score = (
-          (death / (maxDeath || 1)) * 60 +
-          (kp / (maxKP || 1)) * 30 +
-          (t5 / ((t4 + t5) || 1)) * 40
+        const score = Math.min(
+          ((death / (maxDeath || 1)) ** 0.8) * 70 +
+          ((kp / (maxKP || 1)) ** 0.8) * 40 +
+          (t5 / ((t4 + t5) || 1)) * 40,
+          100
         ).toFixed(1);
         const grade = calculateGrade(score);
         return { uid, name, score: parseFloat(score), grade };
@@ -61,7 +63,8 @@ function renderPage() {
   const pagination = document.getElementById("pagination-controls");
 
   const start = (currentPage - 1) * pageSize;
-  const pageData = filteredData.slice(start, start + pageSize);
+  const visible = filteredData.filter(d => gradeFilter === "ALL" || d.grade === gradeFilter);
+  const pageData = visible.slice(start, start + pageSize);
 
   tableContainer.innerHTML = "";
   const table = document.createElement("table");
@@ -71,23 +74,44 @@ function renderPage() {
       <tr><th>UID</th><th>닉네임</th><th>기여도 점수</th><th>등급</th></tr>
     </thead>
     <tbody>
-      ${pageData.map(d => `<tr><td>${d.uid}</td><td>${d.name}</td><td>${d.score}</td><td>${d.grade}</td></tr>`).join("")}
+      ${pageData.map(d => `<tr class="grade-${d.grade.toLowerCase()}"><td>${d.uid}</td><td>${d.name}</td><td>${d.score}</td><td>${d.grade}</td></tr>`).join("")}
     </tbody>
   `;
   tableContainer.appendChild(table);
 
   pagination.innerHTML = "";
-  const totalPages = Math.ceil(filteredData.length / pageSize);
-  for (let i = 1; i <= totalPages; i++) {
+  const totalPages = Math.ceil(visible.length / pageSize);
+  const prevBtn = document.createElement("button");
+  prevBtn.textContent = "◀ Prev";
+  prevBtn.disabled = currentPage === 1;
+  prevBtn.onclick = () => {
+    currentPage--;
+    renderPage();
+  };
+  pagination.appendChild(prevBtn);
+
+  const nextBtn = document.createElement("button");
+  nextBtn.textContent = "Next ▶";
+  nextBtn.disabled = currentPage === totalPages;
+  nextBtn.onclick = () => {
+    currentPage++;
+    renderPage();
+  };
+  pagination.appendChild(nextBtn);
+}
+
+function renderFilters() {
+  const filterContainer = document.getElementById("grade-filters");
+  ["ALL", "S", "A", "B", "C", "D"].forEach(grade => {
     const btn = document.createElement("button");
-    btn.textContent = i;
-    if (i === currentPage) btn.disabled = true;
+    btn.textContent = grade === "ALL" ? "전체 보기" : `${grade} 등급만`;
     btn.onclick = () => {
-      currentPage = i;
+      gradeFilter = grade;
+      currentPage = 1;
       renderPage();
     };
-    pagination.appendChild(btn);
-  }
+    filterContainer.appendChild(btn);
+  });
 }
 
 document.getElementById("search").addEventListener("input", e => {
@@ -100,4 +124,7 @@ document.getElementById("search").addEventListener("input", e => {
   renderPage();
 });
 
-window.onload = fetchData;
+window.onload = () => {
+  renderFilters();
+  fetchData();
+};
