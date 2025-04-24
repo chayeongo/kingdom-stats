@@ -9,10 +9,8 @@
 <body>
   <h1>KVK2 기여도 분석</h1>
 
-  <!-- 검색창 -->
   <input type="text" id="search" placeholder="닉네임 또는 UID 검색" />
 
-  <!-- 보기 수 선택 -->
   <div>
     <label style="text-align: center; display: block;">
       보기 수: 
@@ -24,12 +22,8 @@
     </label>
   </div>
 
-  <!-- 등급 필터 버튼 -->
-  <div id="grade-filters">
-    <!-- JS가 버튼을 자동 생성 -->
-  </div>
+  <div id="grade-filters"></div>
 
-  <!-- 기여도 테이블 -->
   <div class="table-wrapper">
     <table>
       <thead>
@@ -41,15 +35,21 @@
         </tr>
       </thead>
       <tbody id="contributionTable">
-        <!-- JS가 데이터 삽입 -->
+        <!-- JS가 여기에 데이터 삽입 -->
       </tbody>
     </table>
   </div>
 
-  <!-- 페이지네이션 -->
   <div id="pagination"></div>
 
-  <!-- JS 파일 실행 -->
-  <script src="contribution.js"></script>
+  <!-- ✅ JS는 DOMContentLoaded 후에 실행 -->
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      const script = document.createElement("script");
+      script.src = "contribution.js";
+      document.body.appendChild(script);
+    });
+  </script>
 </body>
 </html>
+
