@@ -13,6 +13,15 @@
   </header>
 
   <main>
+    <div id="controls">
+      <input type="text" id="search" placeholder="이름 또는 UID 검색">
+      <select id="page-size">
+        <option value="10">10명 보기</option>
+        <option value="20">20명 보기</option>
+        <option value="50">50명 보기</option>
+      </select>
+    </div>
+
     <div id="kvk-tabs">
       <button onclick="loadKVK(1)">KVK1</button>
       <button onclick="loadKVK(2)">KVK2</button>
@@ -22,6 +31,8 @@
     <div id="data-table">
       <!-- 통계 표가 여기에 표시됩니다 -->
     </div>
+
+    <div id="pagination-controls"></div>
   </main>
 
   <footer>
