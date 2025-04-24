@@ -1,145 +1,129 @@
-const sheetLinks = {
-  "3599": "https://docs.google.com/spreadsheets/d/1G2RwOq32kSubrYRtO5xt6UsaIXQBdfjKsz9r386PFso/gviz/tq?tqx=out:json&sheet=KVK2"
+let data = [];
+let filteredData = [];
+let currentPage = 1;
+let pageSize = 10;
+
+const gradeColors = {
+  S: "grade-S",
+  A: "grade-A",
+  B: "grade-B",
+  C: "grade-C",
+  D: "grade-D"
 };
-
-const kingdomId = new URLSearchParams(window.location.search).get("kingdomId") || "3599";
-const sheetURL = sheetLinks[kingdomId];
-
-let allData = [], filteredData = [], currentPage = 1;
-const pageSize = 10;
-let gradeFilter = "ALL";
 
 function calculateGrade(score) {
   if (score >= 90) return "S";
   if (score >= 80) return "A";
-  if (score >= 70) return "B";
-  if (score >= 60) return "C";
+  if (score >= 60) return "B";
+  if (score >= 40) return "C";
   return "D";
 }
 
-function fetchData() {
-  fetch(sheetURL)
-    .then(res => res.text())
-    .then(text => {
-      const json = JSON.parse(text.substring(47).slice(0, -2));
-      const table = json.table;
-      const cols = table.cols.map(col => col.label);
-      const rows = table.rows.map(row => row.c.map(cell => cell?.v ?? ""));
-
-      const uidIdx = cols.findIndex(c => c.toLowerCase().includes("uid"));
-      const nameIdx = cols.findIndex(c => c.toLowerCase().includes("name"));
-      const deathIdx = cols.findIndex(c => c === "Death");
-      const kpIdx = cols.findIndex(c => c === "Total KP (T4 + T5)");
-      const t4Idx = cols.findIndex(c => c === "T4-Kills");
-      const t5Idx = cols.findIndex(c => c === "T5-Kills");
-
-      const deaths = rows.map(r => parseInt(r[deathIdx] || 0));
-      const t4s = rows.map(r => parseInt(r[t4Idx] || 0));
-      const t5s = rows.map(r => parseInt(r[t5Idx] || 0));
-      const kps = rows.map(r => parseInt(r[kpIdx] || 0));
-
-      const maxDeath = Math.max(...deaths);
-      const maxT4 = Math.max(...t4s);
-      const maxT5 = Math.max(...t5s);
-      const maxKP = Math.max(...kps);
-
-      allData = rows.map(r => {
-        const uid = r[uidIdx];
-        const name = r[nameIdx];
-        const death = parseInt(r[deathIdx] || 0);
-        const kp = parseInt(r[kpIdx] || 0);
-        const t4 = parseInt(r[t4Idx] || 0);
-        const t5 = parseInt(r[t5Idx] || 0);
-
-        const normDeath = death / (maxDeath || 1);
-        const normT4 = t4 / (maxT4 || 1);
-        const normT5 = t5 / (maxT5 || 1);
-        const normKP = kp / (maxKP || 1);
-
-        const score = Math.min(
-          normDeath * 30 +
-          normT5 * 40 +
-          normT4 * 15 +
-          normKP * 15,
-          100
-        ).toFixed(1);
-
-        const grade = calculateGrade(score);
-        return { uid, name, score: parseFloat(score), grade };
-      }).sort((a, b) => b.score - a.score);
-
-      filteredData = [...allData];
-      renderPage();
-    });
-}
-
-function renderPage() {
-  const tableContainer = document.getElementById("contribution-table");
-  const pagination = document.getElementById("pagination-controls");
+function renderTable() {
+  const table = document.getElementById("contributionTable");
+  if (!table) return;
 
   const start = (currentPage - 1) * pageSize;
-  const visible = filteredData.filter(d => gradeFilter === "ALL" || d.grade === gradeFilter);
-  const pageData = visible.slice(start, start + pageSize);
+  const end = start + pageSize;
+  const current = filteredData.slice(start, end);
 
-  tableContainer.innerHTML = "";
-  const table = document.createElement("table");
-  table.className = "dkp-table";
-  table.innerHTML = `
-    <thead>
-      <tr><th>UID</th><th>닉네임</th><th>기여도 점수</th><th>등급</th></tr>
-    </thead>
-    <tbody>
-      ${pageData.map(d => `<tr class="grade-${d.grade.toLowerCase()}"><td>${d.uid}</td><td>${d.name}</td><td>${d.score}</td><td>${d.grade}</td></tr>`).join("")}
-    </tbody>
-  `;
-  tableContainer.appendChild(table);
+  table.innerHTML = current.map(d => `
+    <tr class="${gradeColors[d.grade]}">
+      <td>${d.uid}</td>
+      <td>${d.name}</td>
+      <td>${d.score.toFixed(1)}</td>
+      <td>${d.grade}</td>
+    </tr>
+  `).join("");
+}
 
-  pagination.innerHTML = "";
-  const totalPages = Math.ceil(visible.length / pageSize);
-  const prevBtn = document.createElement("button");
-  prevBtn.textContent = "◀ Prev";
-  prevBtn.disabled = currentPage === 1;
-  prevBtn.onclick = () => {
-    currentPage--;
-    renderPage();
-  };
-  pagination.appendChild(prevBtn);
+function renderPagination() {
+  const container = document.getElementById("pagination");
+  container.innerHTML = "";
 
-  const nextBtn = document.createElement("button");
-  nextBtn.textContent = "Next ▶";
-  nextBtn.disabled = currentPage === totalPages;
-  nextBtn.onclick = () => {
-    currentPage++;
-    renderPage();
-  };
-  pagination.appendChild(nextBtn);
+  const totalPages = Math.ceil(filteredData.length / pageSize);
+  for (let i = 1; i <= totalPages; i++) {
+    const btn = document.createElement("button");
+    btn.textContent = i;
+    btn.onclick = () => {
+      currentPage = i;
+      renderTable();
+    };
+    if (i === currentPage) btn.style.fontWeight = "bold";
+    container.appendChild(btn);
+  }
 }
 
 function renderFilters() {
-  const filterContainer = document.getElementById("grade-filters");
-  ["ALL", "S", "A", "B", "C", "D"].forEach(grade => {
+  const grades = ["S", "A", "B", "C", "D"];
+  const container = document.getElementById("grade-filters");
+  container.innerHTML = "";
+
+  grades.forEach(grade => {
     const btn = document.createElement("button");
-    btn.textContent = grade === "ALL" ? "전체 보기" : `${grade} 등급만`;
+    btn.textContent = grade;
     btn.onclick = () => {
-      gradeFilter = grade;
+      filteredData = data.filter(d => d.grade === grade);
       currentPage = 1;
-      renderPage();
+      renderTable();
+      renderPagination();
+
+      document.querySelectorAll("#grade-filters button").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
     };
-    filterContainer.appendChild(btn);
+    container.appendChild(btn);
   });
 }
 
-document.getElementById("search").addEventListener("input", e => {
-  const val = e.target.value.toLowerCase();
-  filteredData = allData.filter(d =>
-    d.uid.toLowerCase().includes(val) ||
-    d.name.toLowerCase().includes(val)
+function renderPage() {
+  renderTable();
+  renderPagination();
+  renderFilters();
+}
+
+function handleSearch() {
+  const query = document.getElementById("search").value.toLowerCase();
+  filteredData = data.filter(d =>
+    d.uid.toString().includes(query) || d.name.toLowerCase().includes(query)
   );
   currentPage = 1;
   renderPage();
-});
+}
 
-window.onload = () => {
-  renderFilters();
+function handlePageSizeChange(val) {
+  pageSize = parseInt(val);
+  currentPage = 1;
+  renderPage();
+}
+
+// ✅ Google Sheets 불러오기 (KVK2만 사용)
+async function fetchData() {
+  const kingdomId = new URLSearchParams(window.location.search).get("kingdomId");
+  const url = `https://docs.google.com/spreadsheets/d/1G2RwOq32kSubrYRtO5xt6UsaIXQBdfjKsz9r386PFso/gviz/tq?tqx=out:json&sheet=KVK2`;
+
+  try {
+    const res = await fetch(url);
+    const text = await res.text();
+    const json = JSON.parse(text.substr(47).slice(0, -2));
+    const rows = json.table.rows;
+
+    data = rows.map(r => {
+      const uid = r.c[0]?.v || "";
+      const name = r.c[1]?.v || "";
+      const score = parseFloat(r.c[2]?.v || 0);
+      const grade = calculateGrade(score);
+      return { uid, name, score, grade };
+    });
+
+    filteredData = [...data];
+    renderPage();
+  } catch (error) {
+    console.error("데이터 불러오기 실패:", error);
+  }
+}
+
+// ✅ 페이지 로딩 완료 후 실행
+window.addEventListener("DOMContentLoaded", () => {
   fetchData();
-};
+  document.getElementById("search").addEventListener("input", handleSearch);
+});
