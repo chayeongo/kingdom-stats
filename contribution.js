@@ -34,10 +34,12 @@ function fetchData() {
       const t5Idx = cols.findIndex(c => c === "T5-Kills");
 
       const deaths = rows.map(r => parseInt(r[deathIdx] || 0));
+      const t4s = rows.map(r => parseInt(r[t4Idx] || 0));
       const t5s = rows.map(r => parseInt(r[t5Idx] || 0));
       const kps = rows.map(r => parseInt(r[kpIdx] || 0));
 
       const maxDeath = Math.max(...deaths);
+      const maxT4 = Math.max(...t4s);
       const maxT5 = Math.max(...t5s);
       const maxKP = Math.max(...kps);
 
@@ -50,13 +52,15 @@ function fetchData() {
         const t5 = parseInt(r[t5Idx] || 0);
 
         const normDeath = death / (maxDeath || 1);
+        const normT4 = t4 / (maxT4 || 1);
         const normT5 = t5 / (maxT5 || 1);
         const normKP = kp / (maxKP || 1);
 
         const score = Math.min(
-          normDeath * 35 +
-          normT5 * 55 +
-          normKP * 20,
+          normDeath * 30 +
+          normT5 * 40 +
+          normT4 * 15 +
+          normKP * 15,
           100
         ).toFixed(1);
 
