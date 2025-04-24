@@ -1,127 +1,75 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kingdom War Contribution</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="kingdom.js" defer></script>
-  <style>
-    body {
-      margin: 0;
-      font-family: sans-serif;
-      background-color: #1a1a1a;
-      color: #ffffff;
-    }
-
-    .header {
-      text-align: center;
-      padding: 2rem;
-      background-color: #222;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    }
-
-    .header h1 {
-      margin: 0;
-      font-size: 2rem;
-    }
-
-    .tabs {
-      display: flex;
-      justify-content: center;
-      margin: 1rem 0;
-      gap: 1rem;
-    }
-
-    .tab {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 4px;
-      background-color: #444;
-      color: white;
-      cursor: pointer;
-    }
-
-    .tab.active {
-      background-color: #ff6600;
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 1rem;
-    }
-
-    .controls {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1rem;
-    }
-
-    input[type="text"], select {
-      padding: 0.5rem;
-      border-radius: 4px;
-      border: none;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    th, td {
-      padding: 0.75rem;
-      text-align: center;
-      border: 1px solid #444;
-    }
-
-    th {
-      background-color: #333;
-      color: #ffcc00;
-    }
-
-    tr:nth-child(even) {
-      background-color: #222;
-    }
-
-    .pagination {
-      text-align: center;
-      margin-top: 1rem;
-    }
-
-    .pagination button {
-      margin: 0 0.25rem;
-      padding: 0.5rem 1rem;
-      background-color: #333;
-      border: none;
-      color: #ffcc00;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kingdom War Stats</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="header">
-    <h1>왕국 전쟁 기여도 분석</h1>
-    <div class="tabs">
-      <button class="tab active" onclick="loadKVK('KVK1')">KVK1</button>
-      <button class="tab" onclick="loadKVK('KVK2')">KVK2</button>
-      <button class="tab" onclick="loadKVK('KVK3')">KVK3</button>
-    </div>
+  <h1 style="text-align: center;">KVK 전쟁 기여도</h1>
+
+  <!-- 탭 -->
+  <div class="tabs">
+    <button class="tab" id="KVK1" onclick="loadKVK('KVK1')">KVK1</button>
+    <button class="tab" id="KVK2" onclick="loadKVK('KVK2')">KVK2</button>
+    <button class="tab" id="KVK3" onclick="loadKVK('KVK3')">KVK3</button>
   </div>
 
-  <div class="container">
-    <div class="controls">
-      <input type="text" id="searchBox" placeholder="이름 또는 UID 검색" oninput="handleSearch()">
-      <select id="pageSize" onchange="handlePageSizeChange()">
-        <option value="10">10개씩 보기</option>
-        <option value="20">20개씩 보기</option>
-        <option value="50">50개씩 보기</option>
-      </select>
-    </div>
-    <div id="kvkTable"></div>
-    <div class="pagination" id="pagination"></div>
+  <!-- ✅ 기여도 분석 버튼 추가 위치 -->
+  <div style="text-align: center; margin: 1rem;">
+    <button onclick="goToContribution()">⚔️ KVK2 기여도 분석 보기</button>
   </div>
+
+  <!-- 검색 -->
+  <input id="search" type="text" oninput="handleSearch()" placeholder="UID 또는 이름 검색">
+
+  <!-- 보기 수 조절 -->
+  <div style="text-align: center; margin: 1rem;">
+    <label>보기 수: 
+      <select onchange="handlePageSizeChange(this.value)">
+        <option>10</option>
+        <option>20</option>
+        <option>50</option>
+      </select>
+    </label>
+  </div>
+
+  <!-- 테이블 -->
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>UID</th>
+          <th>이름</th>
+          <th>기여도 점수</th>
+        </tr>
+      </thead>
+      <tbody id="data">
+        <!-- 데이터 자동 삽입 -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 페이지네이션 -->
+  <div id="pagination"></div>
+
+  <!-- 스크립트 -->
+  <script src="kingdom.js"></script>
+
+  <!-- ✅ 기여도 분석 이동 스크립트 -->
+  <script>
+    function goToContribution() {
+      const params = new URLSearchParams(window.location.search);
+      const kingdomId = params.get("kingdomId");
+      window.location.href = `contribution.html?kingdomId=${kingdomId}`;
+    }
+
+    // 기본 탭은 KVK3
+    document.addEventListener("DOMContentLoaded", () => {
+      loadKVK('KVK3');
+      document.getElementById("KVK3").classList.add("active");
+    });
+  </script>
 </body>
 </html>
