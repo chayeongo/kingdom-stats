@@ -1,15 +1,22 @@
+/* 기본 구조 */
 body {
   margin: 0;
-  font-family: sans-serif;
+  padding: 0;
   background-color: #1a1a1a;
-  color: white;
+  color: #ffffff;
+  font-family: sans-serif;
 }
 
+/* 제목 */
 h1 {
   text-align: center;
-  padding: 1rem;
+  margin: 1.5rem 0;
+  font-size: 2.2rem;
+  color: #ffcc00;
+  text-shadow: 0 0 8px rgba(255, 204, 0, 0.4);
 }
 
+/* 탭 */
 .tabs {
   display: flex;
   justify-content: center;
@@ -18,20 +25,53 @@ h1 {
 }
 
 .tab {
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 1.2rem;
   background-color: #333;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  transition: 0.2s ease;
 }
 
 .tab.active {
   background-color: #ff4500;
+  box-shadow: 0 0 10px rgba(255, 69, 0, 0.6);
 }
 
+/* 버튼 */
+button {
+  background-color: #ff4500;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s;
+  box-shadow: 0 0 10px rgba(255, 69, 0, 0.4);
+}
+
+button:hover {
+  background-color: #e03e00;
+  transform: scale(1.05);
+}
+
+/* 입력창 */
+input[type="text"], select {
+  padding: 0.5rem;
+  margin: 0.5rem auto;
+  display: block;
+  border-radius: 4px;
+  border: 1px solid #444;
+  background-color: #2a2a2a;
+  color: white;
+  width: 220px;
+}
+
+/* 테이블 */
 .table-wrapper {
-  width: 90%;
+  width: 95%;
   margin: auto;
   overflow-x: auto;
 }
@@ -39,19 +79,23 @@ h1 {
 table {
   width: 100%;
   border-collapse: collapse;
-  background-color: #222;
+  background-color: #2a2a2a;
   color: white;
 }
 
 th, td {
-  border: 1px solid #555;
-  padding: 0.5rem;
+  padding: 0.6rem;
+  border: 1px solid #444;
   text-align: center;
 }
 
+tr:hover {
+  background-color: #333;
+}
+
+/* 페이지네이션 */
 #pagination {
-  display: flex;
-  justify-content: center;
+  text-align: center;
   margin: 1rem 0;
 }
 
@@ -59,22 +103,16 @@ th, td {
   margin: 0 5px;
   padding: 0.4rem 0.8rem;
   background-color: #333;
-  color: white;
-  border: none;
   border-radius: 3px;
-  cursor: pointer;
 }
 
 #pagination button:hover {
   background-color: #ff4500;
 }
 
-#search {
-  display: block;
-  margin: 0 auto 1rem;
-  padding: 0.5rem;
-  width: 200px;
-  background-color: #222;
-  border: 1px solid #555;
-  color: white;
-}
+/* 등급 강조 (기여도 분석용) */
+.grade-S { color: gold; font-weight: bold; }
+.grade-A { color: #3399ff; font-weight: bold; }
+.grade-B { color: #66cc66; font-weight: bold; }
+.grade-C { color: #ccc; }
+.grade-D { color: #ff5555; }
