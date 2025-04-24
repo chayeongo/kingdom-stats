@@ -10,6 +10,10 @@
 <body>
   <header>
     <h1 id="kingdom-title">왕국 전쟁 통계</h1>
+    <!-- 🏠 홈으로 돌아가기 버튼 -->
+    <nav style="text-align: center; margin-bottom: 1rem;">
+      <a href="index.html" style="text-decoration: none; color: #007bff;">← 왕국 선택으로 돌아가기</a>
+    </nav>
   </header>
 
   <main>
@@ -26,7 +30,10 @@
       <button onclick="loadKVK(1)">KVK1</button>
       <button onclick="loadKVK(2)">KVK2</button>
       <button onclick="loadKVK(3)">KVK3</button>
-      <button onclick="showContributionAnalysis()">기여도 분석</button>
+      <!-- ✅ 새 분석 페이지로 이동 -->
+      <a href="contribution.html?kingdomId=3599">
+        <button>기여도 분석</button>
+      </a>
     </div>
 
     <div id="data-table">
@@ -34,14 +41,6 @@
     </div>
 
     <div id="pagination-controls"></div>
-
-    <!-- ✅ 기여도 분석 전용 영역 (초기 숨김) -->
-    <section id="contribution-section" style="display: none;">
-      <h2>KVK2 기여도 분석</h2>
-      <input type="text" id="contribution-search" placeholder="UID 또는 닉네임 검색">
-      <div id="contribution-table"></div>
-      <div id="contribution-pagination"></div>
-    </section>
   </main>
 
   <footer>
