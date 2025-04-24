@@ -1,200 +1,152 @@
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f8f9fa;
-  color: #333;
-  margin: 0;
-  padding: 0;
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kingdom Stats</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Orbitron', sans-serif;
+      color: #fff;
+      background-color: #000;
+      overflow: hidden;
+    }
 
-header, footer {
-  text-align: center;
-  padding: 1rem;
-  background-color: #222;
-  color: white;
-}
+    .background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url("assets/medieval_background.jpg") no-repeat center center/cover;
+      filter: brightness(0.25) blur(2px);
+      z-index: -2;
+    }
 
-h1 {
-  margin-bottom: 0.5rem;
-}
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.4));
+      z-index: -1;
+    }
 
-/* Index: 왕국 선택 카드 */
-main.kingdom-grid {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 2rem;
-  padding: 2rem;
-}
+    .particles {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
 
-.kingdom-card {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
-  width: 250px;
-  text-align: center;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
+    .content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding-top: 20vh;
+    }
 
-.kingdom-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-}
+    h1 {
+      font-size: 3.5rem;
+      letter-spacing: 3px;
+      color: #ffcc00;
+      text-shadow: 0 0 10px rgba(255, 204, 0, 0.8);
+    }
 
-.kingdom-card h2 {
-  margin-bottom: 0.5rem;
-}
+    p {
+      font-size: 1.4rem;
+      opacity: 0.9;
+      color: #eee;
+      text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+    }
 
-.kingdom-card p {
-  margin-bottom: 1rem;
-  color: #555;
-}
+    .button {
+      margin-top: 2rem;
+      padding: 12px 28px;
+      font-size: 1.1rem;
+      background-color: #ff4500;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+      box-shadow: 0 0 10px rgba(255, 69, 0, 0.6);
+    }
 
-.kingdom-card button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
+    .button:hover {
+      background-color: #e03e00;
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <div class="background"></div>
+  <div class="overlay"></div>
+  <canvas class="particles" id="particleCanvas"></canvas>
+  <div class="content">
+    <h1>3599 Kingdom DKP Analysis</h1>
+    <p>Explore real-time kingdom war performance</p>
+    <a href="kingdom.html?kingdomId=3599" class="button">Enter Kingdom</a>
+  </div>
 
-.kingdom-card button:hover {
-  background-color: #0056b3;
-}
+  <script>
+    const canvas = document.getElementById('particleCanvas');
+    const ctx = canvas.getContext('2d');
+    let particlesArray;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
-/* 기여도 분석 페이지 */
-#search {
-  padding: 8px;
-  width: 100%;
-  max-width: 300px;
-  margin: 1rem auto;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  display: block;
-}
+    const colors = ['#ffaa33', '#ffdd55', '#ff7733'];
 
-#grade-filters {
-  text-align: center;
-  margin-bottom: 1rem;
-}
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 2 + 1;
+        this.speedY = Math.random() * 0.5 + 0.2;
+        this.color = colors[Math.floor(Math.random() * colors.length)];
+      }
+      update() {
+        this.y += this.speedY;
+        if (this.y > canvas.height) {
+          this.y = 0;
+          this.x = Math.random() * canvas.width;
+        }
+      }
+      draw() {
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
 
-#grade-filters button {
-  background-color: #e9ecef;
-  border: none;
-  margin: 0 4px;
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
+    function init() {
+      particlesArray = [];
+      for (let i = 0; i < 150; i++) {
+        particlesArray.push(new Particle());
+      }
+    }
 
-#grade-filters button:hover {
-  background-color: #ced4da;
-}
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particlesArray.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      requestAnimationFrame(animate);
+    }
 
-.dkp-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 1rem;
-}
-
-.dkp-table th, .dkp-table td {
-  border: 1px solid #dee2e6;
-  padding: 0.75rem;
-  text-align: center;
-}
-
-.dkp-table th {
-  background-color: #f1f3f5;
-  font-weight: bold;
-}
-
-/* 등급 색상 강조 */
-.grade-s td { background-color: #d4edda; color: #155724; }
-.grade-a td { background-color: #fff3cd; color: #856404; }
-.grade-b td { background-color: #d1ecf1; color: #0c5460; }
-.grade-c td { background-color: #f8d7da; color: #721c24; }
-.grade-d td { background-color: #f5c6cb; color: #721c24; }
-
-/* 페이지네이션 */
-#pagination-controls {
-  text-align: center;
-  margin: 1.5rem 0;
-}
-
-#pagination-controls button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  margin: 0 6px;
-  padding: 6px 14px;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-#pagination-controls button:disabled {
-  background-color: #6c757d;
-  cursor: not-allowed;
-}
-
-#pagination-controls button:hover:not(:disabled) {
-  background-color: #0056b3;
-}
-
-/* KVK 통계 페이지 공통 입력 */
-#controls {
-  text-align: center;
-  margin: 1rem 0;
-}
-
-#controls input[type="text"] {
-  padding: 8px;
-  width: 200px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 1rem;
-  margin-right: 0.5rem;
-}
-
-#controls select {
-  padding: 8px;
-  border-radius: 6px;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-}
-
-#kvk-tabs {
-  text-align: center;
-  margin-bottom: 1rem;
-}
-
-#kvk-tabs button {
-  background-color: #6c757d;
-  color: white;
-  border: none;
-  margin: 0 4px;
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-#kvk-tabs button:hover {
-  background-color: #495057;
-}
-
-#kvk-tabs a button {
-  background-color: #007bff;
-}
-
-#kvk-tabs a button:hover {
-  background-color: #0056b3;
-}
+    init();
+    animate();
+  </script>
+</body>
+</html>
