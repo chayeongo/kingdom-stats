@@ -4,15 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>KVK2 기여도 분석</title>
-  <link rel="stylesheet" href="style-contribution-light.css" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <h1>KVK2 기여도 분석</h1>
 
   <input type="text" id="search" placeholder="닉네임 또는 UID 검색" />
 
-  <div style="text-align: center; margin: 1rem;">
-    <label>보기 수: 
+  <div>
+    <label style="text-align: center; display: block;">
+      보기 수: 
       <select onchange="handlePageSizeChange(this.value)">
         <option>10</option>
         <option>20</option>
@@ -21,8 +22,8 @@
     </label>
   </div>
 
-  <div id="grade-filters" style="text-align: center; margin-bottom: 1rem;">
-    <!-- 필터 버튼은 JS에서 자동 생성 -->
+  <div id="grade-filters">
+    <!-- JS가 버튼을 자동으로 만듦 -->
   </div>
 
   <div class="table-wrapper">
@@ -36,7 +37,7 @@
         </tr>
       </thead>
       <tbody id="contributionTable">
-        <!-- JS로 렌더링됨 -->
+        <!-- JS 삽입 -->
       </tbody>
     </table>
   </div>
