@@ -1,5 +1,13 @@
 // kingdom.js
-const sheetId = "1G2RwOq32kSubrYRtO5xt6UsaIXQBdfjKsz9r386PFso";
+const kingdomMap = {
+  "3599": "1G2RwOq32kSubrYRtO5xt6UsaIXQBdfjKsz9r386PFso",
+  "3550": "YOUR_SHEET_ID_FOR_3550"
+};
+
+const urlParams = new URLSearchParams(window.location.search);
+const kingdomId = urlParams.get("kingdomId") || "3599";
+const sheetId = kingdomMap[kingdomId];
+
 const table = document.getElementById("kvkTable");
 const pagination = document.getElementById("pagination");
 const searchBox = document.getElementById("searchBox");
