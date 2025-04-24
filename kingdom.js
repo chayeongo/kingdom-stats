@@ -1,99 +1,88 @@
-// kingdom.js
 const kingdomMap = {
-  "3599": "1G2RwOq32kSubrYRtO5xt6UsaIXQBdfjKsz9r386PFso",
-  "3550": "YOUR_SHEET_ID_FOR_3550"
+  "3599": "1G2RwOq32kSubrYRtO5xt6UsaIXQBdfjKsz9r386PFso", // 3599 시트 ID
+  "3550": "YOUR_SPREADSHEET_ID_FOR_3550" // 필요 시 교체
 };
 
-const urlParams = new URLSearchParams(window.location.search);
-const kingdomId = urlParams.get("kingdomId") || "3599";
-const sheetId = kingdomMap[kingdomId];
-
-const table = document.getElementById("kvkTable");
-const pagination = document.getElementById("pagination");
-const searchBox = document.getElementById("searchBox");
-const pageSizeSelector = document.getElementById("pageSize");
-
+const kingdomId = new URLSearchParams(window.location.search).get("kingdomId");
+const sheetId = kingdomMap[kingdomId] || kingdomMap["3599"];
+let currentKVK = "KVK3";
 let originalData = [];
-let filteredData = [];
 let currentPage = 1;
 let pageSize = 10;
-let currentSheet = "KVK3";
 
-function buildUrl(sheet) {
-  return `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=${sheet}`;
-}
-
-async function loadKVK(sheet) {
-  currentSheet = sheet;
-  document.querySelectorAll(".tab").forEach(tab => tab.classList.remove("active"));
-  document.querySelector(`.tab[onclick*='${sheet}']`).classList.add("active");
-
-  const response = await fetch(buildUrl(sheet));
-  const text = await response.text();
-  const json = JSON.parse(text.substring(47).slice(0, -2));
-
-  originalData = json.table.rows.map(row => {
-    return {
-      uid: row.c[0]?.v || "",
-      name: row.c[1]?.v || "",
-      total_kp: row.c[2]?.v || 0,
-      death: row.c[3]?.v || 0,
-      t5: row.c[4]?.v || 0
-    };
-  });
-
-  handleSearch();
-}
-
-function handleSearch() {
-  const keyword = searchBox.value.toLowerCase();
-  filteredData = originalData.filter(row =>
-    row.name.toLowerCase().includes(keyword) || row.uid.toString().includes(keyword)
-  );
-  currentPage = 1;
-  renderTable();
-}
-
-function handlePageSizeChange() {
-  pageSize = parseInt(pageSizeSelector.value);
-  currentPage = 1;
-  renderTable();
+function fetchData(kvk) {
+  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=${kvk}`;
+  fetch(url)
+    .then(res => res.text())
+    .then(text => JSON.parse(text.substr(47).slice(0, -2)))
+    .then(json => {
+      const rows = json.table.rows;
+      originalData = rows.map(r => ({
+        uid: r.c[0]?.v || "",
+        name: r.c[1]?.v || "",
+        score: r.c[2]?.v || 0,
+      }));
+      currentPage = 1;
+      renderTable();
+    });
 }
 
 function renderTable() {
   const start = (currentPage - 1) * pageSize;
   const end = start + pageSize;
-  const pageData = filteredData.slice(start, end);
+  const data = originalData.slice(start, end);
 
-  let html = "<table><thead><tr><th>UID</th><th>Name</th><th>Total KP</th><th>Deaths</th><th>T5 Kills</th></tr></thead><tbody>";
-  pageData.forEach(row => {
-    html += `<tr>
-      <td>${row.uid}</td>
-      <td>${row.name}</td>
-      <td>${Number(row.total_kp).toLocaleString()}</td>
-      <td>${Number(row.death).toLocaleString()}</td>
-      <td>${Number(row.t5).toLocaleString()}</td>
-    </tr>`;
-  });
-  html += "</tbody></table>";
-  table.innerHTML = html;
+  const table = document.getElementById("data");
+  table.innerHTML = data.map(d => `
+    <tr>
+      <td>${d.uid}</td>
+      <td>${d.name}</td>
+      <td>${d.score}</td>
+    </tr>`).join("");
 
   renderPagination();
 }
 
 function renderPagination() {
-  const pageCount = Math.ceil(filteredData.length / pageSize);
-  let buttons = "";
+  const pageCount = Math.ceil(originalData.length / pageSize);
+  const container = document.getElementById("pagination");
+  container.innerHTML = "";
+
   for (let i = 1; i <= pageCount; i++) {
-    buttons += `<button onclick="goToPage(${i})" ${i === currentPage ? "style='font-weight:bold'" : ""}>${i}</button>`;
+    const btn = document.createElement("button");
+    btn.textContent = i;
+    btn.onclick = () => {
+      currentPage = i;
+      renderTable();
+    };
+    if (i === currentPage) btn.style.fontWeight = "bold";
+    container.appendChild(btn);
   }
-  pagination.innerHTML = buttons;
 }
 
-function goToPage(page) {
-  currentPage = page;
+function handleSearch() {
+  const q = document.getElementById("search").value.toLowerCase();
+  const filtered = originalData.filter(
+    d => d.uid.toLowerCase().includes(q) || d.name.toLowerCase().includes(q)
+  );
+  originalData = filtered;
+  currentPage = 1;
   renderTable();
 }
 
-// Load default
-loadKVK(currentSheet);
+function handlePageSizeChange(value) {
+  pageSize = parseInt(value);
+  currentPage = 1;
+  renderTable();
+}
+
+function loadKVK(kvk) {
+  currentKVK = kvk;
+  fetchData(kvk);
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+  document.getElementById(kvk).classList.add("active");
+}
+
+window.onload = () => {
+  fetchData(currentKVK);
+};
