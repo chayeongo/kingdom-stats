@@ -1,12 +1,13 @@
 const kingdomMap = {
-  "3599": "1G2RwOq32kSubrYRtO5xt6UsaIXQBdfjKsz9r386PFso", // 3599 시트 ID
-  "3550": "YOUR_SPREADSHEET_ID_FOR_3550" // 필요 시 교체
+  "3599": "1G2RwOq32kSubrYRtO5xt6UsaIXQBdfjKsz9r386PFso",
+  "3550": "YOUR_3550_SPREADSHEET_ID"
 };
 
 const kingdomId = new URLSearchParams(window.location.search).get("kingdomId");
 const sheetId = kingdomMap[kingdomId] || kingdomMap["3599"];
 let currentKVK = "KVK3";
 let originalData = [];
+let filteredData = [];
 let currentPage = 1;
 let pageSize = 10;
 
@@ -20,8 +21,9 @@ function fetchData(kvk) {
       originalData = rows.map(r => ({
         uid: r.c[0]?.v || "",
         name: r.c[1]?.v || "",
-        score: r.c[2]?.v || 0,
+        score: r.c[2]?.v || 0
       }));
+      filteredData = [...originalData];
       currentPage = 1;
       renderTable();
     });
@@ -30,25 +32,26 @@ function fetchData(kvk) {
 function renderTable() {
   const start = (currentPage - 1) * pageSize;
   const end = start + pageSize;
-  const data = originalData.slice(start, end);
+  const currentData = filteredData.slice(start, end);
 
   const table = document.getElementById("data");
-  table.innerHTML = data.map(d => `
+  table.innerHTML = currentData.map(d => `
     <tr>
       <td>${d.uid}</td>
       <td>${d.name}</td>
-      <td>${d.score}</td>
-    </tr>`).join("");
+      <td>${d.score.toLocaleString()}</td>
+    </tr>
+  `).join("");
 
   renderPagination();
 }
 
 function renderPagination() {
-  const pageCount = Math.ceil(originalData.length / pageSize);
+  const totalPages = Math.ceil(filteredData.length / pageSize);
   const container = document.getElementById("pagination");
   container.innerHTML = "";
 
-  for (let i = 1; i <= pageCount; i++) {
+  for (let i = 1; i <= totalPages; i++) {
     const btn = document.createElement("button");
     btn.textContent = i;
     btn.onclick = () => {
@@ -62,27 +65,26 @@ function renderPagination() {
 
 function handleSearch() {
   const q = document.getElementById("search").value.toLowerCase();
-  const filtered = originalData.filter(
-    d => d.uid.toLowerCase().includes(q) || d.name.toLowerCase().includes(q)
+  filteredData = originalData.filter(d =>
+    d.uid.toLowerCase().includes(q) ||
+    d.name.toLowerCase().includes(q)
   );
-  originalData = filtered;
   currentPage = 1;
   renderTable();
 }
 
-function handlePageSizeChange(value) {
-  pageSize = parseInt(value);
+function handlePageSizeChange(val) {
+  pageSize = parseInt(val);
   currentPage = 1;
   renderTable();
 }
 
 function loadKVK(kvk) {
-  currentKVK = kvk;
-  fetchData(kvk);
   document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
   document.getElementById(kvk).classList.add("active");
+  fetchData(kvk);
 }
 
 window.onload = () => {
-  fetchData(currentKVK);
+  loadKVK(currentKVK);
 };
