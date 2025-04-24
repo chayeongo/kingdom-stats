@@ -26,6 +26,7 @@
       <button onclick="loadKVK(1)">KVK1</button>
       <button onclick="loadKVK(2)">KVK2</button>
       <button onclick="loadKVK(3)">KVK3</button>
+      <button onclick="showContributionAnalysis()">기여도 분석</button>
     </div>
 
     <div id="data-table">
@@ -33,6 +34,14 @@
     </div>
 
     <div id="pagination-controls"></div>
+
+    <!-- ✅ 기여도 분석 전용 영역 (초기 숨김) -->
+    <section id="contribution-section" style="display: none;">
+      <h2>KVK2 기여도 분석</h2>
+      <input type="text" id="contribution-search" placeholder="UID 또는 닉네임 검색">
+      <div id="contribution-table"></div>
+      <div id="contribution-pagination"></div>
+    </section>
   </main>
 
   <footer>
