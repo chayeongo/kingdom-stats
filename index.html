@@ -1,35 +1,129 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>왕국 선택</title>
+  <title>Kingdom Stats - Animated</title>
   <link rel="stylesheet" href="styles.css">
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+      overflow: hidden;
+    }
+
+    .background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url("/assets/medieval_background.jpg") no-repeat center center/cover;
+      filter: brightness(0.3) blur(2px);
+      z-index: -2;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(ellipse at center, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.8) 100%);
+      z-index: -1;
+    }
+
+    .particles {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding-top: 20vh;
+    }
+
+    h1 {
+      font-size: 3rem;
+      letter-spacing: 2px;
+    }
+
+    p {
+      font-size: 1.25rem;
+      opacity: 0.8;
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <h1>Rise of Kingdoms DKP 통계</h1>
-    <p>원하는 왕국을 선택하세요</p>
-  </header>
+  <div class="background"></div>
+  <div class="overlay"></div>
+  <canvas class="particles" id="particleCanvas"></canvas>
+  <div class="content">
+    <h1>3599 Kingdom DKP Analysis</h1>
+    <p>Real-time Contribution Insights - S/A/B/C/D Grading</p>
+  </div>
 
-  <main class="kingdom-grid">
-    <!-- 3599 카드 -->
-    <div class="kingdom-card">
-      <h2>3599 베르디나 왕국</h2>
-      <p>전투력 상위권, 기여도 분석 포함</p>
-      <button onclick="location.href='kingdom.html?kingdomId=3599'">입장하기</button>
-    </div>
+  <script>
+    // Simple particle animation
+    const canvas = document.getElementById('particleCanvas');
+    const ctx = canvas.getContext('2d');
+    let particlesArray;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
-    <!-- 3550 카드 -->
-    <div class="kingdom-card">
-      <h2>3550 미로 왕국</h2>
-      <p>참여 데이터 준비 중</p>
-      <button onclick="location.href='kingdom.html?kingdomId=3550'">입장하기</button>
-    </div>
-  </main>
+    const colors = ['#ffaa33', '#ffdd55', '#ff7733'];
 
-  <footer>
-    <p>&copy; 2025 Rise of Kingdoms DKP Analytics</p>
-  </footer>
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 2 + 1;
+        this.speedY = Math.random() * 0.5 + 0.2;
+        this.color = colors[Math.floor(Math.random() * colors.length)];
+      }
+      update() {
+        this.y += this.speedY;
+        if (this.y > canvas.height) {
+          this.y = 0;
+          this.x = Math.random() * canvas.width;
+        }
+      }
+      draw() {
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    function init() {
+      particlesArray = [];
+      for (let i = 0; i < 150; i++) {
+        particlesArray.push(new Particle());
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particlesArray.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      requestAnimationFrame(animate);
+    }
+
+    init();
+    animate();
+  </script>
 </body>
 </html>
