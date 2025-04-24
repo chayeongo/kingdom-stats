@@ -13,9 +13,9 @@ const gradeColors = {
 
 function calculateGrade(score) {
   if (score >= 90) return "S";
-  if (score >= 80) return "A";
-  if (score >= 60) return "B";
-  if (score >= 40) return "C";
+  if (score >= 75) return "A";
+  if (score >= 50) return "B";
+  if (score >= 30) return "C";
   return "D";
 }
 
@@ -96,9 +96,8 @@ function handlePageSizeChange(val) {
   renderPage();
 }
 
-// ✅ Google Sheets 불러오기 (KVK2만 사용)
+// ✅ Google Sheets 불러오기 (KVK2 전용)
 async function fetchData() {
-  const kingdomId = new URLSearchParams(window.location.search).get("kingdomId");
   const url = `https://docs.google.com/spreadsheets/d/1G2RwOq32kSubrYRtO5xt6UsaIXQBdfjKsz9r386PFso/gviz/tq?tqx=out:json&sheet=KVK2`;
 
   try {
@@ -107,10 +106,28 @@ async function fetchData() {
     const json = JSON.parse(text.substr(47).slice(0, -2));
     const rows = json.table.rows;
 
+    // 최대값 계산
+    const t5List = rows.map(r => r.c[6]?.v || 0);
+    const t4List = rows.map(r => r.c[5]?.v || 0);
+    const deathList = rows.map(r => r.c[3]?.v || 0);
+    const maxT5 = Math.max(...t5List);
+    const maxT4 = Math.max(...t4List);
+    const maxDeath = Math.max(...deathList);
+
+    // 점수 계산 및 데이터 구성
     data = rows.map(r => {
       const uid = r.c[0]?.v || "";
       const name = r.c[1]?.v || "";
-      const score = parseFloat(r.c[2]?.v || 0);
+      const totalKP = r.c[2]?.v || 0;
+      const deaths = r.c[3]?.v || 0;
+      const t4 = r.c[5]?.v || 0;
+      const t5 = r.c[6]?.v || 0;
+
+      const score =
+        Math.sqrt(t5 / maxT5) * 30 +
+        (t4 / maxT4) * 25 +
+        (deaths / maxDeath) * 45;
+
       const grade = calculateGrade(score);
       return { uid, name, score, grade };
     });
@@ -122,7 +139,7 @@ async function fetchData() {
   }
 }
 
-// ✅ 페이지 로딩 완료 후 실행
+// ✅ 페이지 로드 후 실행
 window.addEventListener("DOMContentLoaded", () => {
   fetchData();
   document.getElementById("search").addEventListener("input", handleSearch);
