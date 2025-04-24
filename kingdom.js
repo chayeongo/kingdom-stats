@@ -63,5 +63,6 @@ function renderTable(headers, rows) {
   container.appendChild(table);
 }
 
-// 기본 KVK 로딩
+// 기본 탭 로딩
 loadKVK(1);
+
