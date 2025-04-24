@@ -1,59 +1,55 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kingdom War Analysis</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kingdom War Contribution</title>
+  <link rel="stylesheet" href="style.css">
   <script src="kingdom.js" defer></script>
   <style>
     body {
       margin: 0;
-      background: linear-gradient(to bottom, #000000, #111111);
+      font-family: sans-serif;
+      background-color: #1a1a1a;
       color: #ffffff;
-      font-family: 'Orbitron', sans-serif;
-      overflow-x: hidden;
     }
 
     .header {
       text-align: center;
-      padding: 2rem 1rem 1rem;
-      background: rgba(0,0,0,0.6);
-      backdrop-filter: blur(5px);
+      padding: 2rem;
+      background-color: #222;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     }
 
     .header h1 {
-      font-size: 2.5rem;
-      color: #ffcc00;
-      margin-bottom: 0.5rem;
-      text-shadow: 0 0 8px rgba(255, 204, 0, 0.7);
+      margin: 0;
+      font-size: 2rem;
     }
 
     .tabs {
       display: flex;
       justify-content: center;
+      margin: 1rem 0;
       gap: 1rem;
-      margin-top: 1rem;
     }
 
     .tab {
       padding: 10px 20px;
-      background: #222;
-      border: 1px solid #555;
-      border-radius: 6px;
-      color: #fff;
+      border: none;
+      border-radius: 4px;
+      background-color: #444;
+      color: white;
       cursor: pointer;
-      transition: all 0.3s ease;
     }
 
-    .tab:hover, .tab.active {
-      background: #ff4500;
-      border-color: #ff7733;
-      box-shadow: 0 0 10px rgba(255, 69, 0, 0.6);
+    .tab.active {
+      background-color: #ff6600;
     }
 
     .container {
-      padding: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem;
     }
 
     .controls {
@@ -61,36 +57,23 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 1rem;
-      flex-wrap: wrap;
     }
 
-    .controls input[type="text"] {
-      padding: 8px 12px;
-      font-size: 1rem;
+    input[type="text"], select {
+      padding: 0.5rem;
       border-radius: 4px;
       border: none;
-      outline: none;
-    }
-
-    .controls select {
-      padding: 6px 10px;
-      font-size: 1rem;
-      border-radius: 4px;
-      background-color: #222;
-      color: white;
-      border: 1px solid #555;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 1rem;
     }
 
     th, td {
       padding: 0.75rem;
-      border: 1px solid #444;
       text-align: center;
+      border: 1px solid #444;
     }
 
     th {
@@ -99,20 +82,20 @@
     }
 
     tr:nth-child(even) {
-      background-color: #1a1a1a;
+      background-color: #222;
     }
 
     .pagination {
-      margin-top: 1rem;
       text-align: center;
+      margin-top: 1rem;
     }
 
     .pagination button {
-      margin: 0 5px;
-      padding: 5px 10px;
+      margin: 0 0.25rem;
+      padding: 0.5rem 1rem;
       background-color: #333;
+      border: none;
       color: #ffcc00;
-      border: 1px solid #555;
       border-radius: 4px;
       cursor: pointer;
     }
@@ -120,21 +103,21 @@
 </head>
 <body>
   <div class="header">
-    <h1>Kingdom War Contribution Report</h1>
+    <h1>왕국 전쟁 기여도 분석</h1>
     <div class="tabs">
-      <div class="tab active" onclick="loadKVK('KVK1')">KVK1</div>
-      <div class="tab" onclick="loadKVK('KVK2')">KVK2</div>
-      <div class="tab" onclick="loadKVK('KVK3')">KVK3</div>
+      <button class="tab active" onclick="loadKVK('KVK1')">KVK1</button>
+      <button class="tab" onclick="loadKVK('KVK2')">KVK2</button>
+      <button class="tab" onclick="loadKVK('KVK3')">KVK3</button>
     </div>
   </div>
 
   <div class="container">
     <div class="controls">
-      <input type="text" id="searchBox" placeholder="Search UID or Name" oninput="handleSearch()">
+      <input type="text" id="searchBox" placeholder="이름 또는 UID 검색" oninput="handleSearch()">
       <select id="pageSize" onchange="handlePageSizeChange()">
-        <option value="10">10 per page</option>
-        <option value="20">20 per page</option>
-        <option value="50">50 per page</option>
+        <option value="10">10개씩 보기</option>
+        <option value="20">20개씩 보기</option>
+        <option value="50">50개씩 보기</option>
       </select>
     </div>
     <div id="kvkTable"></div>
