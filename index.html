@@ -3,177 +3,55 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kingdom Stats</title>
+  <title>DKP Kingdom Selector</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
   <style>
-    body, html {
+    body {
       margin: 0;
-      padding: 0;
-      height: 100%;
+      background: url('./assets/medieval_background.jpg') no-repeat center center/cover;
+      color: white;
       font-family: 'Orbitron', sans-serif;
-      color: #fff;
-      background-color: #000;
-      overflow: hidden;
-    }
-
-    .background {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: url("./assets/medieval_background.jpg") no-repeat center center/cover;
-      filter: brightness(0.25) blur(2px);
-      z-index: -2;
-    }
-
-    .overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.4));
-      z-index: -1;
-    }
-
-    .language-switcher {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      z-index: 10;
-    }
-
-    .language-switcher button {
-      background-color: transparent;
-      border: 1px solid #fff;
-      color: #fff;
-      padding: 5px 10px;
-      margin-left: 5px;
-      cursor: pointer;
-      border-radius: 5px;
-    }
-
-    .particles {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .content {
-      position: relative;
-      z-index: 1;
-      text-align: center;
-      padding-top: 20vh;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
     }
 
     h1 {
-      font-size: 3.5rem;
-      letter-spacing: 3px;
-      color: #ffcc00;
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
       text-shadow: 0 0 10px rgba(255, 204, 0, 0.8);
     }
 
-    p {
-      font-size: 1.4rem;
-      opacity: 0.9;
-      color: #eee;
-      text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+    .kingdom-buttons {
+      display: flex;
+      gap: 2rem;
     }
 
-    .button {
-      margin-top: 2rem;
-      padding: 12px 28px;
-      font-size: 1.1rem;
+    .kingdom-button {
+      padding: 1rem 2rem;
+      font-size: 1.2rem;
       background-color: #ff4500;
       border: none;
-      border-radius: 8px;
-      color: white;
+      border-radius: 10px;
       cursor: pointer;
-      transition: background 0.3s, transform 0.2s;
+      color: white;
       box-shadow: 0 0 10px rgba(255, 69, 0, 0.6);
+      transition: transform 0.2s, background 0.3s;
     }
 
-    .button:hover {
+    .kingdom-button:hover {
       background-color: #e03e00;
       transform: scale(1.05);
     }
   </style>
 </head>
 <body>
-  <div class="background"></div>
-  <div class="overlay"></div>
-  <div class="language-switcher">
-    <button onclick="switchLang('en')">EN</button>
-    <button onclick="switchLang('ko')">KR</button>
+  <h1>Select Your Kingdom</h1>
+  <div class="kingdom-buttons">
+    <button class="kingdom-button" onclick="location.href='kingdom.html?kingdomId=3599'">3599 베르디나</button>
+    <button class="kingdom-button" onclick="location.href='kingdom.html?kingdomId=3550'">3550 미로</button>
   </div>
-  <canvas class="particles" id="particleCanvas"></canvas>
-  <div class="content">
-    <h1 data-en="3599 Kingdom DKP Analysis" data-ko="3599 왕국 DKP 분석">3599 Kingdom DKP Analysis</h1>
-    <p data-en="Explore real-time kingdom war performance" data-ko="왕국 전쟁 기여도를 실시간으로 분석하세요">Explore real-time kingdom war performance</p>
-    <a href="kingdom.html?kingdomId=3599" class="button" data-en="Enter Kingdom" data-ko="왕국 입장">Enter Kingdom</a>
-  </div>
-
-  <script>
-    function switchLang(lang) {
-      document.querySelectorAll('[data-en]').forEach(el => {
-        el.textContent = el.getAttribute(`data-${lang}`);
-      });
-    }
-
-    const canvas = document.getElementById('particleCanvas');
-    const ctx = canvas.getContext('2d');
-    let particlesArray;
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    const colors = ['#ffaa33', '#ffdd55', '#ff7733'];
-
-    class Particle {
-      constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.size = Math.random() * 2 + 1;
-        this.speedY = Math.random() * 0.5 + 0.2;
-        this.color = colors[Math.floor(Math.random() * colors.length)];
-      }
-      update() {
-        this.y += this.speedY;
-        if (this.y > canvas.height) {
-          this.y = 0;
-          this.x = Math.random() * canvas.width;
-        }
-      }
-      draw() {
-        ctx.fillStyle = this.color;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
-
-    function init() {
-      particlesArray = [];
-      for (let i = 0; i < 150; i++) {
-        particlesArray.push(new Particle());
-      }
-    }
-
-    function animate() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particlesArray.forEach(p => {
-        p.update();
-        p.draw();
-      });
-      requestAnimationFrame(animate);
-    }
-
-    init();
-    animate();
-  </script>
 </body>
 </html>
