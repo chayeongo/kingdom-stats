@@ -41,7 +41,13 @@ function fetchData() {
         const t4 = parseInt(r[t4Idx] || 0);
         const t5 = parseInt(r[t5Idx] || 0);
 
-        const score = Math.min((t4 * 1) + (t5 * 3) + (death * 5), 100).toFixed(1);
+        const score = Math.min(
+          (t4 * 0.0000006) +
+          (t5 * 0.0000026) +
+          (death * 0.0000095),
+          100
+        ).toFixed(1);
+
         const grade = calculateGrade(score);
         return { uid, name, score: parseFloat(score), grade };
       }).sort((a, b) => b.score - a.score);
