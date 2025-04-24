@@ -33,9 +33,6 @@ function fetchData() {
       const t4Idx = cols.findIndex(c => c === "T4-Kills");
       const t5Idx = cols.findIndex(c => c === "T5-Kills");
 
-      const maxDeath = Math.max(...rows.map(r => parseInt(r[deathIdx] || 0)));
-      const maxKP = Math.max(...rows.map(r => parseInt(r[kpIdx] || 0)));
-
       allData = rows.map(r => {
         const uid = r[uidIdx];
         const name = r[nameIdx];
@@ -43,12 +40,8 @@ function fetchData() {
         const kp = parseInt(r[kpIdx] || 0);
         const t4 = parseInt(r[t4Idx] || 0);
         const t5 = parseInt(r[t5Idx] || 0);
-        const score = Math.min(
-          ((death / (maxDeath || 1)) ** 0.8) * 70 +
-          ((kp / (maxKP || 1)) ** 0.8) * 40 +
-          (t5 / ((t4 + t5) || 1)) * 40,
-          100
-        ).toFixed(1);
+
+        const score = Math.min((t4 * 1) + (t5 * 3) + (death * 5), 100).toFixed(1);
         const grade = calculateGrade(score);
         return { uid, name, score: parseFloat(score), grade };
       }).sort((a, b) => b.score - a.score);
