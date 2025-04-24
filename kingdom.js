@@ -15,8 +15,9 @@ const sheetLinks = {
 
 const kingdomId = new URLSearchParams(window.location.search).get("kingdomId") || "3599";
 const currentKingdom = sheetLinks[kingdomId];
-
 document.getElementById("kingdom-title").textContent = `${currentKingdom.name} - 전쟁 통계`;
+
+let allRows = [], headers = [], pageSize = 10, currentPage = 1;
 
 function loadKVK(kvkNumber) {
   const url = currentKingdom[`kvk${kvkNumber}`];
@@ -25,15 +26,25 @@ function loadKVK(kvkNumber) {
     .then(text => {
       const json = JSON.parse(text.substring(47).slice(0, -2));
       const table = json.table;
-      const headers = table.cols.map(col => col.label);
-      const rows = table.rows.map(row => row.c.map(cell => cell?.v ?? ""));
-      renderTable(headers, rows);
+      headers = table.cols.map(col => col.label);
+      allRows = table.rows.map(row => row.c.map(cell => cell?.v ?? ""));
+      currentPage = 1;
+      renderTable();
     });
 }
 
-function renderTable(headers, rows) {
+function renderTable() {
   const container = document.getElementById("data-table");
+  const pagination = document.getElementById("pagination-controls");
   container.innerHTML = "";
+  pagination.innerHTML = "";
+
+  const searchText = document.getElementById("search").value.toLowerCase();
+  const filteredRows = allRows.filter(row => row.some(cell => `${cell}`.toLowerCase().includes(searchText)));
+
+  const start = (currentPage - 1) * pageSize;
+  const end = start + pageSize;
+  const pageRows = filteredRows.slice(start, end);
 
   const table = document.createElement("table");
   table.className = "dkp-table";
@@ -49,7 +60,7 @@ function renderTable(headers, rows) {
   table.appendChild(thead);
 
   const tbody = document.createElement("tbody");
-  rows.forEach(row => {
+  pageRows.forEach(row => {
     const tr = document.createElement("tr");
     row.forEach(cell => {
       const td = document.createElement("td");
@@ -58,11 +69,35 @@ function renderTable(headers, rows) {
     });
     tbody.appendChild(tr);
   });
-
   table.appendChild(tbody);
   container.appendChild(table);
+
+  // 페이지네이션 렌더링
+  const totalPages = Math.ceil(filteredRows.length / pageSize);
+  for (let i = 1; i <= totalPages; i++) {
+    const btn = document.createElement("button");
+    btn.textContent = i;
+    if (i === currentPage) btn.disabled = true;
+    btn.onclick = () => {
+      currentPage = i;
+      renderTable();
+    };
+    pagination.appendChild(btn);
+  }
 }
 
-// 기본 탭 로딩
-loadKVK(1);
+// 초기 페이지 설정
+window.onload = () => {
+  document.getElementById("page-size").addEventListener("change", (e) => {
+    pageSize = parseInt(e.target.value);
+    currentPage = 1;
+    renderTable();
+  });
 
+  document.getElementById("search").addEventListener("input", () => {
+    currentPage = 1;
+    renderTable();
+  });
+
+  loadKVK(3); // 기본 탭: KVK3
+};
