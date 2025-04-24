@@ -49,14 +49,15 @@ function fetchData() {
         const t4 = parseInt(r[t4Idx] || 0);
         const t5 = parseInt(r[t5Idx] || 0);
 
-        const normDeath = (death / (maxDeath || 1)) ** 0.9;
-        const normT5 = (t5 / (maxT5 || 1)) ** 0.9;
-        const normKP = (kp / (maxKP || 1)) ** 0.9;
+        const normDeath = death / (maxDeath || 1);
+        const normT5 = t5 / (maxT5 || 1);
+        const normKP = kp / (maxKP || 1);
 
-        const score = (
-          normDeath * 40 +
-          normT5 * 35 +
-          normKP * 25
+        const score = Math.min(
+          normDeath * 35 +
+          normT5 * 55 +
+          normKP * 20,
+          100
         ).toFixed(1);
 
         const grade = calculateGrade(score);
