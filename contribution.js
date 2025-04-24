@@ -105,25 +105,25 @@ async function fetchData() {
     const json = JSON.parse(text.substr(47).slice(0, -2));
     const rows = json.table.rows;
 
-    const deathsList = rows.map(r => r.c[4]?.v || 0);
-    const t4List = rows.map(r => r.c[5]?.v || 0);
-    const t5List = rows.map(r => r.c[6]?.v || 0);
+    const deathsList = rows.map(r => Number(r.c[4]?.v ?? 0));
+    const t4List = rows.map(r => Number(r.c[5]?.v ?? 0));
+    const t5List = rows.map(r => Number(r.c[6]?.v ?? 0));
 
-    const maxDeath = Math.max(...deathsList);
-    const maxT4 = Math.max(...t4List);
-    const maxT5 = Math.max(...t5List);
+    const maxDeath = Math.max(...deathsList, 1);  // 최소값 1로 방어
+    const maxT4 = Math.max(...t4List, 1);
+    const maxT5 = Math.max(...t5List, 1);
 
     data = rows.map(r => {
-      const uid = r.c[0]?.v || "";
-      const name = r.c[1]?.v || "";
-      const deaths = r.c[4]?.v || 0;
-      const t4Kills = r.c[5]?.v || 0;
-      const t5Kills = r.c[6]?.v || 0;
+      const uid = r.c[0]?.v ?? "";
+      const name = r.c[1]?.v ?? "";
+      const deaths = Number(r.c[4]?.v ?? 0);
+      const t4Kills = Number(r.c[5]?.v ?? 0);
+      const t5Kills = Number(r.c[6]?.v ?? 0);
 
       const score =
-        Math.sqrt(t5Kills / maxT5) * 30 +
-        (t4Kills / maxT4) * 25 +
-        (deaths / maxDeath) * 45;
+        (Math.sqrt(t5Kills / maxT5) || 0) * 30 +
+        (t4Kills / maxT4 || 0) * 25 +
+        (deaths / maxDeath || 0) * 45;
 
       const grade = calculateGrade(score);
       return { uid, name, score, grade };
@@ -140,3 +140,4 @@ window.addEventListener("DOMContentLoaded", () => {
   fetchData();
   document.getElementById("search").addEventListener("input", handleSearch);
 });
+
