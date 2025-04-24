@@ -13,28 +13,24 @@
       font-family: 'Orbitron', sans-serif;
       overflow-x: hidden;
     }
-
     .header {
       text-align: center;
       padding: 2rem 1rem 1rem;
       background: rgba(0,0,0,0.6);
       backdrop-filter: blur(5px);
     }
-
     .header h1 {
       font-size: 2.5rem;
       color: #ffcc00;
       margin-bottom: 0.5rem;
       text-shadow: 0 0 8px rgba(255, 204, 0, 0.7);
     }
-
     .tabs {
       display: flex;
       justify-content: center;
       gap: 1rem;
       margin-top: 1rem;
     }
-
     .tab {
       padding: 10px 20px;
       background: #222;
@@ -44,20 +40,17 @@
       cursor: pointer;
       transition: all 0.3s ease;
     }
-
     .tab:hover, .tab.active {
       background: #ff4500;
       border-color: #ff7733;
       box-shadow: 0 0 10px rgba(255, 69, 0, 0.6);
     }
-
     .card-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 1.5rem;
       padding: 2rem;
     }
-
     .card {
       background: rgba(255, 255, 255, 0.05);
       border-radius: 12px;
@@ -67,19 +60,16 @@
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
       transition: transform 0.3s;
     }
-
     .card:hover {
       transform: scale(1.03);
       border-color: #ffcc00;
       box-shadow: 0 0 12px rgba(255, 204, 0, 0.3);
     }
-
     .card h2 {
       font-size: 1.2rem;
       margin-bottom: 0.5rem;
       color: #fff;
     }
-
     .card p {
       font-size: 0.95rem;
       color: #ccc;
@@ -102,40 +92,41 @@
   </div>
 
   <script>
-    const data = {
-      KVK1: [
-        { name: 'UserA', uid: '1001', kills: 1000000, deaths: 5000, t5: 300000 },
-        { name: 'UserB', uid: '1002', kills: 800000, deaths: 3000, t5: 150000 }
-      ],
-      KVK2: [
-        { name: 'UserC', uid: '1003', kills: 1200000, deaths: 7000, t5: 400000 },
-        { name: 'UserD', uid: '1004', kills: 500000, deaths: 2000, t5: 100000 }
-      ],
-      KVK3: [
-        { name: 'UserE', uid: '1005', kills: 2000000, deaths: 10000, t5: 700000 },
-        { name: 'UserF', uid: '1006', kills: 600000, deaths: 2500, t5: 200000 }
-      ]
-    };
+    const sheetBase = "https://docs.google.com/spreadsheets/d/1G2RwOq32kSubrYRtO5xt6UsaIXQBdfjKsz9r386PFso/gviz/tq?tqx=out:json&sheet=";
 
-    function loadKVK(kvk) {
+    async function loadKVK(sheetName) {
       document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-      document.querySelector(`.tab[onclick*='${kvk}']`).classList.add('active');
+      document.querySelector(`.tab[onclick*='${sheetName}']`).classList.add('active');
+
+      const url = sheetBase + sheetName;
+      const response = await fetch(url);
+      const text = await response.text();
+      const json = JSON.parse(text.substr(47).slice(0, -2));
+
+      const rows = json.table.rows;
       const grid = document.getElementById('cardGrid');
       grid.innerHTML = '';
-      data[kvk].forEach(d => {
+
+      rows.forEach(row => {
+        const uid = row.c[0]?.v || 'N/A';
+        const name = row.c[1]?.v || 'Unnamed';
+        const kills = row.c[2]?.v || 0;
+        const deaths = row.c[3]?.v || 0;
+        const t5 = row.c[4]?.v || 0;
+
         const card = document.createElement('div');
         card.className = 'card';
         card.innerHTML = `
-          <h2>${d.name} <small>(UID: ${d.uid})</small></h2>
-          <p>Total Kills: ${d.kills.toLocaleString()}</p>
-          <p>Deaths: ${d.deaths.toLocaleString()}</p>
-          <p>T5 Kills: ${d.t5.toLocaleString()}</p>
+          <h2>${name} <small>(UID: ${uid})</small></h2>
+          <p>Total Kills: ${kills.toLocaleString()}</p>
+          <p>Deaths: ${deaths.toLocaleString()}</p>
+          <p>T5 Kills: ${t5.toLocaleString()}</p>
         `;
         grid.appendChild(card);
       });
     }
 
-    loadKVK('KVK1');
+    loadKVK('KVK3');
   </script>
 </body>
 </html>
