@@ -7,24 +7,20 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1 style="text-align: center;">KVK 전쟁 기여도</h1>
+  <h1>KVK 전쟁 기여도</h1>
 
-  <!-- 탭 -->
   <div class="tabs">
     <button class="tab" id="KVK1" onclick="loadKVK('KVK1')">KVK1</button>
     <button class="tab" id="KVK2" onclick="loadKVK('KVK2')">KVK2</button>
     <button class="tab" id="KVK3" onclick="loadKVK('KVK3')">KVK3</button>
   </div>
 
-  <!-- 기여도 분석 버튼 -->
   <div style="text-align: center; margin: 1rem;">
     <button onclick="goToContribution()">⚔️ KVK2 기여도 분석 보기</button>
   </div>
 
-  <!-- 검색 -->
-  <input id="search" type="text" oninput="handleSearch()" placeholder="UID 또는 이름 검색">
+  <input id="search" type="text" oninput="handleSearch()" placeholder="UID 또는 이름 검색" />
 
-  <!-- 보기 수 조절 -->
   <div style="text-align: center; margin: 1rem;">
     <label>보기 수: 
       <select onchange="handlePageSizeChange(this.value)">
@@ -35,7 +31,6 @@
     </label>
   </div>
 
-  <!-- 테이블 -->
   <div class="table-wrapper">
     <table>
       <thead>
@@ -45,16 +40,12 @@
           <th>점수</th>
         </tr>
       </thead>
-      <tbody id="data">
-        <!-- 데이터 자동 삽입 -->
-      </tbody>
+      <tbody id="data"></tbody>
     </table>
   </div>
 
-  <!-- 페이지네이션 -->
   <div id="pagination"></div>
 
-  <!-- 스크립트 -->
   <script src="kingdom.js"></script>
   <script>
     function goToContribution() {
@@ -62,6 +53,11 @@
       const kingdomId = params.get("kingdomId");
       window.location.href = `contribution.html?kingdomId=${kingdomId}`;
     }
+
+    window.onload = () => {
+      loadKVK('KVK3');
+      document.getElementById("KVK3").classList.add("active");
+    };
   </script>
 </body>
 </html>
