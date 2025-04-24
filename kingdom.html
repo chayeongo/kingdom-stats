@@ -1,50 +1,141 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>왕국 전쟁 통계</title>
-  <link rel="stylesheet" href="styles.css">
-  <script defer src="kingdom.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kingdom War Analysis</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      background: linear-gradient(to bottom, #000000, #111111);
+      color: #ffffff;
+      font-family: 'Orbitron', sans-serif;
+      overflow-x: hidden;
+    }
+
+    .header {
+      text-align: center;
+      padding: 2rem 1rem 1rem;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(5px);
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      color: #ffcc00;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 0 8px rgba(255, 204, 0, 0.7);
+    }
+
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .tab {
+      padding: 10px 20px;
+      background: #222;
+      border: 1px solid #555;
+      border-radius: 6px;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .tab:hover, .tab.active {
+      background: #ff4500;
+      border-color: #ff7733;
+      box-shadow: 0 0 10px rgba(255, 69, 0, 0.6);
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+      padding: 2rem;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 1rem;
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s;
+    }
+
+    .card:hover {
+      transform: scale(1.03);
+      border-color: #ffcc00;
+      box-shadow: 0 0 12px rgba(255, 204, 0, 0.3);
+    }
+
+    .card h2 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #fff;
+    }
+
+    .card p {
+      font-size: 0.95rem;
+      color: #ccc;
+      margin: 4px 0;
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <h1 id="kingdom-title">왕국 전쟁 통계</h1>
-    <!-- 🏠 홈으로 돌아가기 버튼 -->
-    <nav style="text-align: center; margin-bottom: 1rem;">
-      <a href="index.html" style="text-decoration: none; color: #007bff;">← 왕국 선택으로 돌아가기</a>
-    </nav>
-  </header>
-
-  <main>
-    <div id="controls">
-      <input type="text" id="search" placeholder="이름 또는 UID 검색">
-      <select id="page-size">
-        <option value="10">10명 보기</option>
-        <option value="20">20명 보기</option>
-        <option value="50">50명 보기</option>
-      </select>
+  <div class="header">
+    <h1>Kingdom War Contribution Report</h1>
+    <div class="tabs">
+      <div class="tab active" onclick="loadKVK('KVK1')">KVK1</div>
+      <div class="tab" onclick="loadKVK('KVK2')">KVK2</div>
+      <div class="tab" onclick="loadKVK('KVK3')">KVK3</div>
     </div>
+  </div>
 
-    <div id="kvk-tabs">
-      <button onclick="loadKVK(1)">KVK1</button>
-      <button onclick="loadKVK(2)">KVK2</button>
-      <button onclick="loadKVK(3)">KVK3</button>
-      <!-- ✅ 새 분석 페이지로 이동 -->
-      <a href="contribution.html?kingdomId=3599">
-        <button>기여도 분석</button>
-      </a>
-    </div>
+  <div class="card-grid" id="cardGrid">
+    <!-- Cards will be populated here -->
+  </div>
 
-    <div id="data-table">
-      <!-- 통계 표가 여기에 표시됩니다 -->
-    </div>
+  <script>
+    const data = {
+      KVK1: [
+        { name: 'UserA', uid: '1001', kills: 1000000, deaths: 5000, t5: 300000 },
+        { name: 'UserB', uid: '1002', kills: 800000, deaths: 3000, t5: 150000 }
+      ],
+      KVK2: [
+        { name: 'UserC', uid: '1003', kills: 1200000, deaths: 7000, t5: 400000 },
+        { name: 'UserD', uid: '1004', kills: 500000, deaths: 2000, t5: 100000 }
+      ],
+      KVK3: [
+        { name: 'UserE', uid: '1005', kills: 2000000, deaths: 10000, t5: 700000 },
+        { name: 'UserF', uid: '1006', kills: 600000, deaths: 2500, t5: 200000 }
+      ]
+    };
 
-    <div id="pagination-controls"></div>
-  </main>
+    function loadKVK(kvk) {
+      document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+      document.querySelector(`.tab[onclick*='${kvk}']`).classList.add('active');
+      const grid = document.getElementById('cardGrid');
+      grid.innerHTML = '';
+      data[kvk].forEach(d => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <h2>${d.name} <small>(UID: ${d.uid})</small></h2>
+          <p>Total Kills: ${d.kills.toLocaleString()}</p>
+          <p>Deaths: ${d.deaths.toLocaleString()}</p>
+          <p>T5 Kills: ${d.t5.toLocaleString()}</p>
+        `;
+        grid.appendChild(card);
+      });
+    }
 
-  <footer>
-    <p>&copy; 2025 Rise of Kingdoms DKP Analytics</p>
-  </footer>
+    loadKVK('KVK1');
+  </script>
 </body>
 </html>
