@@ -1,10 +1,11 @@
 const sheetLinks = {
   "3599": {
     name: "3599 베르디나 왕국",
-    kvk1: "https://docs.google.com/spreadsheets/d/1G2RwOq32kSubrYRtO5xt6UsaIXQBdfjKsz9r386PFso/edit?gid=2029656051#gid=2029656051",
-    kvk2: "https://docs.google.com/spreadsheets/d/YOUR_SPREADSHEET_ID_3599/gviz/tq?tqx=out:json&sheet=KVK2",
-    kvk3: "https://docs.google.com/spreadsheets/d/YOUR_SPREADSHEET_ID_3599/gviz/tq?tqx=out:json&sheet=KVK3"
-  },
+    kvk1: "https://docs.google.com/spreadsheets/d/1G2RwOq32kSubrYRtO5xt6UsaIXQBdfjKsz9r386PFso/gviz/tq?tqx=out:json&sheet=KVK1",
+    kvk2: "https://docs.google.com/spreadsheets/d/1G2RwOq32kSubrYRtO5xt6UsaIXQBdfjKsz9r386PFso/gviz/tq?tqx=out:json&sheet=KVK2",
+    kvk3: "https://docs.google.com/spreadsheets/d/1G2RwOq32kSubrYRtO5xt6UsaIXQBdfjKsz9r386PFso/gviz/tq?tqx=out:json&sheet=KVK3"
+  }
+};
   "3550": {
     name: "3550 미로 왕국",
     kvk1: "https://docs.google.com/spreadsheets/d/YOUR_SPREADSHEET_ID_3550/gviz/tq?tqx=out:json&sheet=KVK1",
