@@ -1,3 +1,4 @@
+/* 전체 배경 */
 body {
   margin: 0;
   padding: 0;
@@ -6,12 +7,14 @@ body {
   color: #333;
 }
 
+/* 제목 */
 h1 {
   text-align: center;
   margin: 2rem 0 1.2rem;
   color: #222;
 }
 
+/* 검색창, 셀렉트 박스 */
 input, select {
   padding: 0.5rem;
   border-radius: 4px;
@@ -22,6 +25,7 @@ input, select {
   width: 240px;
 }
 
+/* 테이블 스타일 */
 .table-wrapper {
   width: 90%;
   margin: 0 auto;
@@ -49,7 +53,7 @@ tr:hover {
   background-color: #f0f0f0;
 }
 
-/* 등급별 강조 색상 */
+/* 등급 강조 */
 .grade-S { background-color: #fff8dc; color: #d4af37; font-weight: bold; }
 .grade-A { background-color: #e7f3ff; color: #007bff; font-weight: bold; }
 .grade-B { background-color: #eaffea; color: #28a745; }
@@ -57,6 +61,11 @@ tr:hover {
 .grade-D { background-color: #ffeaea; color: #dc3545; }
 
 /* 필터 버튼 */
+#grade-filters {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
 #grade-filters button {
   margin: 0 5px;
   padding: 0.4rem 1rem;
