@@ -21,10 +21,12 @@ const sheetLinks = {
 
 let rawData = [];
 let filteredData = [];
-let pageSize = 10;
 let currentPage = 1;
+let pageSize = 10;
+let currentKVK = "KVK3";
 
 function loadKVK(kvkKey) {
+  currentKVK = kvkKey;
   document.querySelectorAll(".tab").forEach(tab => tab.classList.remove("active"));
   document.querySelector(`.tab[onclick*='${kvkKey}']`).classList.add("active");
 
@@ -37,20 +39,98 @@ function loadKVK(kvkKey) {
       const json = JSON.parse(text.substr(47).slice(0, -2));
       const rows = json.table.rows;
 
-      rawData = rows.map(r => ({
-        uid: r.c[0]?.v || "",
-        name: r.c[1]?.v || "",
-        totalKP: r.c[3]?.v || 0,
-        deaths: r.c[4]?.v || 0,
-        t4: r.c[5]?.v || 0,
-        t5: r.c[6]?.v || 0
-      }));
-
-      filteredData = [...rawData];
-      currentPage = 1;
-      renderPage();
+      if (kvkKey === "KVK3") {
+        renderFullTable(json.table);
+      } else {
+        rawData = rows.map(r => ({
+          uid: r.c[0]?.v || "",
+          name: r.c[1]?.v || "",
+          totalKP: r.c[2]?.v || r.c[3]?.v || 0
+        }));
+        filteredData = [...rawData];
+        currentPage = 1;
+        renderCardPage();
+      }
     });
 }
+
+function renderCardPage() {
+  const start = (currentPage - 1) * pageSize;
+  const page = filteredData.slice(start, start + pageSize);
+  const container = document.getElementById("cardGrid");
+  container.innerHTML = page.map(d => `
+    <div class="card">
+      <h3>${d.name}</h3>
+      <p><strong>UID:</strong> ${d.uid}</p>
+      <p><strong>Total KP:</strong> ${Number(d.totalKP).toLocaleString()}</p>
+    </div>
+  `).join("");
+  renderPagination();
+}
+
+function renderPagination() {
+  const container = document.getElementById("pagination");
+  if (currentKVK === "KVK3") {
+    container.innerHTML = "";
+    return;
+  }
+
+  const totalPages = Math.ceil(filteredData.length / pageSize);
+  container.innerHTML = "";
+
+  for (let i = 1; i <= totalPages; i++) {
+    const btn = document.createElement("button");
+    btn.textContent = i;
+    btn.onclick = () => {
+      currentPage = i;
+      renderCardPage();
+    };
+    if (i === currentPage) btn.style.fontWeight = "bold";
+    container.appendChild(btn);
+  }
+}
+
+function renderFullTable(table) {
+  const grid = document.getElementById("cardGrid");
+  const cols = table.cols.map(c => c.label || "컬럼");
+  const rows = table.rows;
+
+  let html = "<div class='table-wrapper'><table><thead><tr>";
+  cols.forEach(col => {
+    html += `<th>${col}</th>`;
+  });
+  html += "</tr></thead><tbody>";
+
+  rows.forEach(r => {
+    html += "<tr>";
+    r.c.forEach(cell => {
+      html += `<td>${cell?.v ?? ""}</td>`;
+    });
+    html += "</tr>";
+  });
+
+  html += "</tbody></table></div>";
+  grid.innerHTML = html;
+}
+
+function handlePageSizeChange(size) {
+  pageSize = parseInt(size);
+  currentPage = 1;
+  renderCardPage();
+}
+
+document.getElementById("searchInput").addEventListener("input", e => {
+  const query = e.target.value.toLowerCase();
+  filteredData = rawData.filter(d =>
+    d.name.toLowerCase().includes(query) || d.uid.toString().includes(query)
+  );
+  currentPage = 1;
+  renderCardPage();
+});
+
+window.addEventListener("DOMContentLoaded", () => {
+  loadKVK("KVK3");
+});
 
 function renderPage() {
   const start = (currentPage - 1) * pageSize;
