@@ -7,22 +7,22 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>KVK2 기여도 분석</h1>
+  <header class="page-header">
+    <h1>KVK2 Contribution Analysis</h1>
+  </header>
 
-  <input type="text" id="search" placeholder="닉네임 또는 UID 검색" />
+  <section class="controls">
+    <input type="text" id="search" placeholder="닉네임 또는 UID 검색" />
+    <select onchange="handlePageSizeChange(this.value)">
+      <option>10</option>
+      <option>20</option>
+      <option>50</option>
+    </select>
+  </section>
 
-  <div>
-    <label style="text-align: center; display: block;">
-      보기 수: 
-      <select onchange="handlePageSizeChange(this.value)">
-        <option>10</option>
-        <option>20</option>
-        <option>50</option>
-      </select>
-    </label>
-  </div>
-
-  <div id="grade-filters"></div>
+  <section id="grade-filters" class="grade-filters">
+    <!-- JS가 S, A, B, C, D 버튼 렌더링 -->
+  </section>
 
   <div class="table-wrapper">
     <table>
@@ -35,21 +35,13 @@
         </tr>
       </thead>
       <tbody id="contributionTable">
-        <!-- JS가 여기에 데이터 삽입 -->
+        <!-- JS가 데이터 삽입 -->
       </tbody>
     </table>
   </div>
 
-  <div id="pagination"></div>
+  <div id="pagination" class="pagination"></div>
 
-  <!-- ✅ JS는 DOMContentLoaded 후에 실행 -->
-  <script>
-    window.addEventListener("DOMContentLoaded", () => {
-      const script = document.createElement("script");
-      script.src = "contribution.js";
-      document.body.appendChild(script);
-    });
-  </script>
+  <script src="contribution.js"></script>
 </body>
 </html>
-
