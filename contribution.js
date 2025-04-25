@@ -109,7 +109,7 @@ async function fetchData() {
     const t4List = rows.map(r => Number(r.c[5]?.v ?? 0));
     const t5List = rows.map(r => Number(r.c[6]?.v ?? 0));
 
-    const maxDeath = Math.max(...deathsList, 1);  // 최소값 1로 방어
+    const maxDeath = Math.max(...deathsList, 1);
     const maxT4 = Math.max(...t4List, 1);
     const maxT5 = Math.max(...t5List, 1);
 
@@ -140,4 +140,3 @@ window.addEventListener("DOMContentLoaded", () => {
   fetchData();
   document.getElementById("search").addEventListener("input", handleSearch);
 });
-
