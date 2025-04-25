@@ -50,6 +50,12 @@ function loadKVK(kvkKey) {
 function renderTable(headers, dataSlice) {
   const thead = document.querySelector("#kvkTable thead");
   const tbody = document.querySelector("#kvkTable tbody");
+
+  if (!thead || !tbody) {
+    console.warn("테이블 요소가 존재하지 않습니다.");
+    return;
+  }
+
   const start = (currentPage - 1) * pageSize;
   const current = dataSlice.slice(start, start + pageSize);
 
@@ -80,10 +86,11 @@ function renderPagination() {
 }
 
 function renderTableFromState() {
-  const headers = document.querySelector("#kvkTable thead tr th");
-  if (!headers) return; // 아직 로드 안됨
-  const allHeaders = Array.from(headers.parentElement.children).map(th => th.textContent);
-  renderTable(allHeaders, filteredData);
+  const thead = document.querySelector("#kvkTable thead");
+  if (!thead || !thead.querySelector("tr")) return;
+
+  const headers = Array.from(thead.querySelectorAll("th")).map(th => th.textContent);
+  renderTable(headers, filteredData);
 }
 
 document.getElementById("searchInput").addEventListener("input", e => {
