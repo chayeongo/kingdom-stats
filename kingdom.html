@@ -4,16 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>왕국 전쟁 통계</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <header class="page-header">
     <h1 id="kingdomName">Kingdom War Stats</h1>
     <div class="tabs">
-      <button class="tab active" onclick="loadKVK('KVK3')">KVK3</button>
-      <button class="tab" onclick="loadKVK('KVK2')">KVK2</button>
       <button class="tab" onclick="loadKVK('KVK1')">KVK1</button>
+      <button class="tab" onclick="loadKVK('KVK2')">KVK2</button>
+      <button class="tab active" onclick="loadKVK('KVK3')">KVK3</button>
+      <button class="tab" onclick="goToContribution()">기여도 분석</button>
     </div>
   </header>
 
@@ -26,13 +26,22 @@
     </select>
   </section>
 
-  <section id="cardGrid" class="card-grid">
-    <!-- 카드 UI 렌더링 위치 -->
-  </section>
+  <div class="table-wrapper">
+    <table id="kvkTable">
+      <thead></thead>
+      <tbody></tbody>
+    </table>
+  </div>
 
   <div id="pagination" class="pagination"></div>
+
+  <script>
+    function goToContribution() {
+      const kingdomId = new URLSearchParams(window.location.search).get("kingdomId");
+      location.href = `contribution.html?kingdomId=${kingdomId}`;
+    }
+  </script>
 
   <script src="kingdom.js"></script>
 </body>
 </html>
-
