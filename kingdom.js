@@ -13,17 +13,17 @@ const sheetLinks = {
     KVK3: "https://docs.google.com/spreadsheets/d/1G2RwOq32kSubrYRtO5xt6UsaIXQBdfjKsz9r386PFso/gviz/tq?tqx=out:json&sheet=KVK3"
   },
   "3550": {
-    KVK1: "https://docs.google.com/spreadsheets/d/YOUR_SPREADSHEET_ID_3550/gviz/tq?tqx=out:json&sheet=KVK1",
-    KVK2: "https://docs.google.com/spreadsheets/d/YOUR_SPREADSHEET_ID_3550/gviz/tq?tqx=out:json&sheet=KVK2",
-    KVK3: "https://docs.google.com/spreadsheets/d/YOUR_SPREADSHEET_ID_3550/gviz/tq?tqx=out:json&sheet=KVK3"
+    KVK1: "https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID_3550/gviz/tq?tqx=out:json&sheet=KVK1",
+    KVK2: "https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID_3550/gviz/tq?tqx=out:json&sheet=KVK2",
+    KVK3: "https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID_3550/gviz/tq?tqx=out:json&sheet=KVK3"
   }
 };
 
-let rawData = [];
+let tableData = [];
 let filteredData = [];
-let currentPage = 1;
-let pageSize = 10;
 let currentKVK = "KVK3";
+let pageSize = 10;
+let currentPage = 1;
 
 function loadKVK(kvkKey) {
   currentKVK = kvkKey;
@@ -37,152 +37,70 @@ function loadKVK(kvkKey) {
     .then(res => res.text())
     .then(text => {
       const json = JSON.parse(text.substr(47).slice(0, -2));
-      const rows = json.table.rows;
+      const table = json.table;
+      tableData = table.rows.map(row => row.c.map(cell => cell?.v ?? ""));
+      filteredData = [...tableData];
 
-      if (kvkKey === "KVK3") {
-        renderFullTable(json.table);
-      } else {
-        rawData = rows.map(r => ({
-          uid: r.c[0]?.v || "",
-          name: r.c[1]?.v || "",
-          totalKP: r.c[2]?.v || r.c[3]?.v || 0
-        }));
-        filteredData = [...rawData];
-        currentPage = 1;
-        renderCardPage();
-      }
+      const headers = table.cols.map(col => col.label || "열");
+      renderTable(headers, filteredData);
+      renderPagination();
     });
 }
 
-function renderCardPage() {
+function renderTable(headers, dataSlice) {
+  const thead = document.querySelector("#kvkTable thead");
+  const tbody = document.querySelector("#kvkTable tbody");
   const start = (currentPage - 1) * pageSize;
-  const page = filteredData.slice(start, start + pageSize);
-  const container = document.getElementById("cardGrid");
-  container.innerHTML = page.map(d => `
-    <div class="card">
-      <h3>${d.name}</h3>
-      <p><strong>UID:</strong> ${d.uid}</p>
-      <p><strong>Total KP:</strong> ${Number(d.totalKP).toLocaleString()}</p>
-    </div>
+  const current = dataSlice.slice(start, start + pageSize);
+
+  thead.innerHTML = `
+    <tr>${headers.map(h => `<th>${h}</th>`).join("")}</tr>
+  `;
+
+  tbody.innerHTML = current.map(row => `
+    <tr>${row.map(cell => `<td>${cell}</td>`).join("")}</tr>
   `).join("");
-  renderPagination();
 }
 
 function renderPagination() {
   const container = document.getElementById("pagination");
-  if (currentKVK === "KVK3") {
-    container.innerHTML = "";
-    return;
-  }
-
-  const totalPages = Math.ceil(filteredData.length / pageSize);
   container.innerHTML = "";
 
+  const totalPages = Math.ceil(filteredData.length / pageSize);
   for (let i = 1; i <= totalPages; i++) {
     const btn = document.createElement("button");
     btn.textContent = i;
     btn.onclick = () => {
       currentPage = i;
-      renderCardPage();
+      renderTableFromState();
     };
     if (i === currentPage) btn.style.fontWeight = "bold";
     container.appendChild(btn);
   }
 }
 
-function renderFullTable(table) {
-  const grid = document.getElementById("cardGrid");
-  const cols = table.cols.map(c => c.label || "컬럼");
-  const rows = table.rows;
-
-  let html = "<div class='table-wrapper'><table><thead><tr>";
-  cols.forEach(col => {
-    html += `<th>${col}</th>`;
-  });
-  html += "</tr></thead><tbody>";
-
-  rows.forEach(r => {
-    html += "<tr>";
-    r.c.forEach(cell => {
-      html += `<td>${cell?.v ?? ""}</td>`;
-    });
-    html += "</tr>";
-  });
-
-  html += "</tbody></table></div>";
-  grid.innerHTML = html;
-}
-
-function handlePageSizeChange(size) {
-  pageSize = parseInt(size);
-  currentPage = 1;
-  renderCardPage();
+function renderTableFromState() {
+  const headers = document.querySelector("#kvkTable thead tr th");
+  if (!headers) return; // 아직 로드 안됨
+  const allHeaders = Array.from(headers.parentElement.children).map(th => th.textContent);
+  renderTable(allHeaders, filteredData);
 }
 
 document.getElementById("searchInput").addEventListener("input", e => {
   const query = e.target.value.toLowerCase();
-  filteredData = rawData.filter(d =>
-    d.name.toLowerCase().includes(query) || d.uid.toString().includes(query)
+  filteredData = tableData.filter(row =>
+    row.some(cell => cell.toString().toLowerCase().includes(query))
   );
   currentPage = 1;
-  renderCardPage();
+  renderTableFromState();
 });
+
+function handlePageSizeChange(val) {
+  pageSize = parseInt(val);
+  currentPage = 1;
+  renderTableFromState();
+}
 
 window.addEventListener("DOMContentLoaded", () => {
   loadKVK("KVK3");
-});
-
-function renderPage() {
-  const start = (currentPage - 1) * pageSize;
-  const page = filteredData.slice(start, start + pageSize);
-  const container = document.getElementById("cardGrid");
-
-  container.innerHTML = page.map(d => `
-    <div class="card">
-      <h3>${d.name}</h3>
-      <p><strong>UID:</strong> ${d.uid}</p>
-      <p><strong>T4:</strong> ${Number(d.t4).toLocaleString()}</p>
-      <p><strong>T5:</strong> ${Number(d.t5).toLocaleString()}</p>
-      <p><strong>Deaths:</strong> ${Number(d.deaths).toLocaleString()}</p>
-      <p><strong>Total KP:</strong> ${Number(d.totalKP).toLocaleString()}</p>
-    </div>
-  `).join("");
-
-  renderPagination();
-}
-
-function renderPagination() {
-  const totalPages = Math.ceil(filteredData.length / pageSize);
-  const container = document.getElementById("pagination");
-  container.innerHTML = "";
-
-  for (let i = 1; i <= totalPages; i++) {
-    const btn = document.createElement("button");
-    btn.textContent = i;
-    btn.onclick = () => {
-      currentPage = i;
-      renderPage();
-    };
-    if (i === currentPage) btn.style.fontWeight = "bold";
-    container.appendChild(btn);
-  }
-}
-
-function handlePageSizeChange(size) {
-  pageSize = parseInt(size);
-  currentPage = 1;
-  renderPage();
-}
-
-document.getElementById("searchInput").addEventListener("input", e => {
-  const query = e.target.value.toLowerCase();
-  filteredData = rawData.filter(d =>
-    d.name.toLowerCase().includes(query) || d.uid.toString().includes(query)
-  );
-  currentPage = 1;
-  renderPage();
-});
-
-window.addEventListener("DOMContentLoaded", () => {
-  loadKVK("KVK3"); // KVK3 기본 표시
 });
