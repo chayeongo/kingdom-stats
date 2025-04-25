@@ -3,71 +3,36 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kingdom War Stats</title>
-  <link rel="stylesheet" href="style.css?v=2" />
+  <title>왕국 전쟁 통계</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>KVK 전쟁 기여도</h1>
+  <header class="page-header">
+    <h1 id="kingdomName">Kingdom War Stats</h1>
+    <div class="tabs">
+      <button class="tab active" onclick="loadKVK('KVK3')">KVK3</button>
+      <button class="tab" onclick="loadKVK('KVK2')">KVK2</button>
+      <button class="tab" onclick="loadKVK('KVK1')">KVK1</button>
+    </div>
+  </header>
 
-  <!-- 탭 -->
-  <div class="tabs">
-    <button class="tab" id="KVK1" onclick="loadKVK('KVK1')">KVK1</button>
-    <button class="tab" id="KVK2" onclick="loadKVK('KVK2')">KVK2</button>
-    <button class="tab" id="KVK3" onclick="loadKVK('KVK3')">KVK3</button>
-  </div>
+  <section class="controls">
+    <input type="text" id="searchInput" placeholder="이름 또는 UID 검색" />
+    <select onchange="handlePageSizeChange(this.value)">
+      <option>10</option>
+      <option>20</option>
+      <option>50</option>
+    </select>
+  </section>
 
-  <!-- 기여도 분석 버튼 -->
-  <div style="text-align: center; margin: 1rem;">
-    <button onclick="goToContribution()">⚔️ KVK2 기여도 분석 보기</button>
-  </div>
+  <section id="cardGrid" class="card-grid">
+    <!-- 카드 UI 렌더링 위치 -->
+  </section>
 
-  <!-- 검색창 -->
-  <input id="search" type="text" oninput="handleSearch()" placeholder="UID 또는 이름 검색" />
+  <div id="pagination" class="pagination"></div>
 
-  <!-- 보기 수 조절 -->
-  <div style="text-align: center; margin: 1rem;">
-    <label>보기 수: 
-      <select onchange="handlePageSizeChange(this.value)">
-        <option>10</option>
-        <option>20</option>
-        <option>50</option>
-      </select>
-    </label>
-  </div>
-
-  <!-- 테이블 -->
-  <div class="table-wrapper">
-    <table>
-      <thead>
-        <tr>
-          <th>UID</th>
-          <th>이름</th>
-          <th>점수</th>
-        </tr>
-      </thead>
-      <tbody id="data">
-        <!-- JavaScript로 삽입 -->
-      </tbody>
-    </table>
-  </div>
-
-  <!-- 페이지네이션 -->
-  <div id="pagination"></div>
-
-  <!-- 스크립트 -->
   <script src="kingdom.js"></script>
-  <script>
-    function goToContribution() {
-      const params = new URLSearchParams(window.location.search);
-      const kingdomId = params.get("kingdomId");
-      window.location.href = `contribution.html?kingdomId=${kingdomId}`;
-    }
-
-    window.onload = () => {
-      loadKVK("KVK3");
-      document.getElementById("KVK3").classList.add("active");
-    };
-  </script>
 </body>
 </html>
 
