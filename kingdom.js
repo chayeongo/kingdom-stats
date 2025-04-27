@@ -65,8 +65,9 @@ function renderTable(headers, dataSlice) {
 
   tbody.innerHTML = current.map(row => `
     <tr>${row.map(cell => {
-      if (!isNaN(cell) && cell !== "" && cell !== null) {
-        return `<td>${Number(cell).toLocaleString()}</td>`;
+      const num = Number(cell);
+      if (!isNaN(num) && cell !== "" && cell !== null) {
+        return `<td>${num.toLocaleString()}</td>`;
       } else {
         return `<td>${cell}</td>`;
       }
@@ -117,4 +118,3 @@ function handlePageSizeChange(val) {
 window.addEventListener("DOMContentLoaded", () => {
   loadKVK("KVK3");
 });
-
