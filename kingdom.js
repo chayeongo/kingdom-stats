@@ -64,7 +64,13 @@ function renderTable(headers, dataSlice) {
   `;
 
   tbody.innerHTML = current.map(row => `
-    <tr>${row.map(cell => `<td>${cell}</td>`).join("")}</tr>
+    <tr>${row.map(cell => {
+      if (!isNaN(cell) && cell !== "" && cell !== null) {
+        return `<td>${Number(cell).toLocaleString()}</td>`;
+      } else {
+        return `<td>${cell}</td>`;
+      }
+    }).join("")}</tr>
   `).join("");
 }
 
@@ -111,3 +117,4 @@ function handlePageSizeChange(val) {
 window.addEventListener("DOMContentLoaded", () => {
   loadKVK("KVK3");
 });
+
